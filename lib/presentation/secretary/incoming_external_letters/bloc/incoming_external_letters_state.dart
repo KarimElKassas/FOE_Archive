@@ -1,0 +1,13 @@
+abstract class IncomingExternalLettersStates{}
+
+class IncomingExternalLettersInitial extends IncomingExternalLettersStates{}
+class IncomingExternalLettersChangeSelectedLetter extends IncomingExternalLettersStates{}
+class IncomingExternalLettersChangeSortMethod extends IncomingExternalLettersStates{}
+class IncomingExternalLettersSearchLetters extends IncomingExternalLettersStates{}
+class IncomingExternalLettersLoadingLetters extends IncomingExternalLettersStates{}
+class IncomingExternalLettersSuccessfulGetLetters extends IncomingExternalLettersStates{}
+class IncomingExternalLettersErrorGetLetters extends IncomingExternalLettersStates{
+  final String error;
+
+  IncomingExternalLettersErrorGetLetters(this.error);
+}

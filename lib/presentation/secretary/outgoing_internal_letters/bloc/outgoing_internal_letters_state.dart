@@ -1,0 +1,13 @@
+abstract class OutgoingInternalLettersStates{}
+
+class OutgoingInternalLettersInitial extends OutgoingInternalLettersStates{}
+class OutgoingInternalLettersChangeSelectedLetter extends OutgoingInternalLettersStates{}
+class OutgoingInternalLettersChangeSortMethod extends OutgoingInternalLettersStates{}
+class OutgoingInternalLettersSearchLetters extends OutgoingInternalLettersStates{}
+class OutgoingInternalLettersLoadingLetters extends OutgoingInternalLettersStates{}
+class OutgoingInternalLettersSuccessfulGetLetters extends OutgoingInternalLettersStates{}
+class OutgoingInternalLettersErrorGetLetters extends OutgoingInternalLettersStates{
+  final String error;
+
+  OutgoingInternalLettersErrorGetLetters(this.error);
+}
