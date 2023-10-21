@@ -1,11 +1,9 @@
-/*
- * Coded By El Qassas
- */
-
 import 'package:animate_do/animate_do.dart';
+import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:foe_archive/data/models/letter_model.dart';
 import 'package:foe_archive/presentation/incoming_letters/bloc/incoming_letters_cubit.dart';
 import 'package:foe_archive/presentation/incoming_letters/bloc/incoming_letters_state.dart';
 import 'package:foe_archive/presentation/widget/loading_indicator.dart';
@@ -27,7 +25,7 @@ class IncomingLettersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<IncomingLettersCubit>()..getIncomingLetters(),
+      create: (context) => sl<IncomingLettersCubit>()..getData(),
       child: BlocConsumer<IncomingLettersCubit,IncomingLettersStates>(
         listener: (context, state){},
         builder: (context, state){
@@ -36,52 +34,112 @@ class IncomingLettersScreen extends StatelessWidget {
             backgroundColor: Theme.of(context).primaryColorLight,
             body: FadeIn(
               duration: const Duration(milliseconds: 1500),
-              child: Column(
-                children: [
-                  searchAndFilterWidget(context, cubit),
-                  const SizedBox(height:  AppSize.s16,),
-                  cubit.filteredLettersList.isNotEmpty ? headerItem(context, cubit) : const SizedBox.shrink(),
-                  state is IncomingLettersLoadingLetters ?  Expanded(child: Center(child: loadingIndicator(),)) :
-                  cubit.filteredLettersList.isNotEmpty ? Expanded(
-                child: ScrollbarTheme(
-                  data: ScrollbarThemeData(thickness: MaterialStateProperty.all(6)),
-                  child: Scrollbar(
-                    controller: cubit.scrollController,
-                    trackVisibility: true,
-                    thumbVisibility: true,
-                    thickness: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                      child: ListView.builder(
-                        controller: cubit.scrollController,
-                        physics: const ClampingScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: cubit.filteredLettersList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return letterItem(context, cubit, index);
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ) : Expanded(child: Center(child: Text(AppStrings.noData.tr(), style: TextStyle(
-                  color: Theme.of(context).primaryColorDark,
-                  fontFamily: FontConstants.family,
-                  fontSize: AppSize.s24,
-                  fontWeight: FontWeightManager.bold),),)),
-                ],
-              ),
+              child: cubit.isSecretary() ? ContainedTabBarView(
+                  tabBarProperties: TabBarProperties(indicatorColor: ColorManager.goldColor),
+                  onChange: (int index){
+                    cubit.changeInternalOrExternal(index);
+                  },
+                  tabs: [
+                    Text(AppStrings.incomeInternalLetters.tr(), style: TextStyle(
+                        color: Theme.of(context).primaryColorDark,
+                        fontFamily: FontConstants.family,
+                        fontSize: AppSize.s20,
+                        fontWeight: FontWeightManager.bold),),
+                    Text(AppStrings.incomeExternalLetters.tr(), style: TextStyle(
+                        color: Theme.of(context).primaryColorDark,
+                        fontFamily: FontConstants.family,
+                        fontSize: AppSize.s20,
+                        fontWeight: FontWeightManager.bold),)
+                  ],
+                  views: [
+                    internalLettersWidget(context, cubit, state),
+                    externalLettersWidget(context, cubit, state),
+                  ]) :  internalLettersWidget(context, cubit, state),
             ),
           );
         },
       ),
     );
   }
+  Widget internalLettersWidget(BuildContext context, IncomingLettersCubit cubit, IncomingLettersStates state){
+    return Column(
+      children: [
+        searchAndFilterWidget(context, cubit),
+        const SizedBox(height:  AppSize.s16,),
+        cubit.filteredInternalLettersList.isNotEmpty ? headerItem(context, cubit) : const SizedBox.shrink(),
+        state is IncomingLettersLoadingLetters ?  Expanded(child: Center(child: loadingIndicator(),)) :
+        cubit.filteredInternalLettersList.isNotEmpty ? Expanded(
+          child: ScrollbarTheme(
+            data: ScrollbarThemeData(thickness: MaterialStateProperty.all(6)),
+            child: Scrollbar(
+              controller: cubit.internalScrollController,
+              trackVisibility: true,
+              thumbVisibility: true,
+              thickness: 4,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                child: ListView.builder(
+                  controller: cubit.internalScrollController,
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: cubit.filteredInternalLettersList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return letterItem(context, cubit, cubit.filteredInternalLettersList, index);
+                  },
+                ),
+              ),
+            ),
+          ),
+        ) : Expanded(child: Center(child: Text(AppStrings.noData.tr(), style: TextStyle(
+            color: Theme.of(context).primaryColorDark,
+            fontFamily: FontConstants.family,
+            fontSize: AppSize.s24,
+            fontWeight: FontWeightManager.bold),),)),
+      ],
+    );
+  }
+  Widget externalLettersWidget(BuildContext context, IncomingLettersCubit cubit, IncomingLettersStates state){
+    return Column(
+      children: [
+        searchAndFilterWidget(context, cubit),
+        const SizedBox(height:  AppSize.s16,),
+        cubit.filteredExternalLettersList.isNotEmpty ? headerItem(context, cubit) : const SizedBox.shrink(),
+        state is IncomingLettersLoadingLetters ?  Expanded(child: Center(child: loadingIndicator(),)) :
+        cubit.filteredExternalLettersList.isNotEmpty ? Expanded(
+          child: ScrollbarTheme(
+            data: ScrollbarThemeData(thickness: MaterialStateProperty.all(6)),
+            child: Scrollbar(
+              controller: cubit.externalScrollController,
+              trackVisibility: true,
+              thumbVisibility: true,
+              thickness: 4,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                child: ListView.builder(
+                  controller: cubit.externalScrollController,
+                  physics: const ClampingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: cubit.filteredExternalLettersList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return letterItem(context, cubit, cubit.filteredExternalLettersList, index);
+                  },
+                ),
+              ),
+            ),
+          ),
+        ) : Expanded(child: Center(child: Text(AppStrings.noData.tr(), style: TextStyle(
+            color: Theme.of(context).primaryColorDark,
+            fontFamily: FontConstants.family,
+            fontSize: AppSize.s24,
+            fontWeight: FontWeightManager.bold),),)),
+      ],
+    );
+  }
   Widget searchAndFilterWidget(BuildContext context, IncomingLettersCubit cubit){
     return Container(
       decoration: BoxDecoration(
-          color: Colors.black26,
-          border: Border.all(color: Theme.of(context).primaryColorDark, width: 0.1),
+          color: Colors.black12,
+          border: Border.all(color: Colors.transparent,width: 0),
           borderRadius: BorderRadius.circular(AppSize.s16)
       ),
       margin: const EdgeInsets.all(AppSize.s8),
@@ -114,7 +172,7 @@ class IncomingLettersScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: AppSize.s8, horizontal: AppSize.s8),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppSize.s8),
+                      borderRadius: BorderRadius.circular(AppSize.s24),
                       color: Colors.transparent,
                       border: Border.all(
                           color: Theme.of(context).primaryColorDark,
@@ -128,7 +186,7 @@ class IncomingLettersScreen extends StatelessWidget {
                 ).ripple((){
                   //scaleDialog(context, false, filterDialog(context, cubit));
                 },
-                    borderRadius: BorderRadius.circular(AppSize.s8),
+                    borderRadius: BorderRadius.circular(AppSize.s24),
                     overlayColor: MaterialStateColor.resolveWith((states) => Theme.of(context).primaryColorDark.withOpacity(AppSize.s0_2))),
               ],
             ),
@@ -208,7 +266,7 @@ class IncomingLettersScreen extends StatelessWidget {
       ),
     );
   }
-  Widget letterItem(BuildContext context, IncomingLettersCubit cubit, int index){
+  Widget letterItem(BuildContext context, IncomingLettersCubit cubit, List<LetterModel> lettersList, int index){
     return Padding(
       padding: const EdgeInsets.all(AppSize.s8),
       child: Material(
@@ -226,7 +284,7 @@ class IncomingLettersScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  cubit.filteredLettersList[index].letterContent,
+                  lettersList[index].letterContent,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -239,7 +297,7 @@ class IncomingLettersScreen extends StatelessWidget {
               const SizedBox(width: AppSize.s32,),
               Expanded(
                 child: Text(
-                  cubit.filteredLettersList[index].letterNumber,
+                  lettersList[index].letterNumber,
                   style: TextStyle(
                       color: Theme.of(context).primaryColorDark,
                       fontFamily: FontConstants.family,
@@ -250,7 +308,7 @@ class IncomingLettersScreen extends StatelessWidget {
               const SizedBox(width: AppSize.s32,),
               Expanded(
                 child: Text(
-                  cubit.formatDate(cubit.filteredLettersList[index].letterDate??cubit.filteredLettersList[index].updatedAt!),
+                  cubit.formatDate(lettersList[index].letterDate??lettersList[index].updatedAt!),
                   style: TextStyle(
                       color: Theme.of(context).primaryColorDark,
                       fontFamily: FontConstants.family,
@@ -261,7 +319,7 @@ class IncomingLettersScreen extends StatelessWidget {
               const SizedBox(width: AppSize.s32,),
               Expanded(
                 child: Text(
-                  cubit.filteredLettersList[index].directionName.toString(),
+                  lettersList[index].directionName.toString(),
                   style: TextStyle(
                       color: Theme.of(context).primaryColorDark,
                       fontFamily: FontConstants.family,
@@ -274,7 +332,7 @@ class IncomingLettersScreen extends StatelessWidget {
         ).ripple((){
           Navigator.pushNamed(
               context, RoutesManager.letterDetailsRoute,
-              arguments: LetterDetailsArgs(cubit.filteredLettersList[index], false));
+              arguments: LetterDetailsArgs(lettersList[index], false));
         },
             borderRadius: const BorderRadius.all(Radius.circular(AppSize.s10)),
             overlayColor: MaterialStateColor.resolveWith((states) => ColorManager.goldColor.withOpacity(0.15))),

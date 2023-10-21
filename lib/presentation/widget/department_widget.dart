@@ -8,6 +8,8 @@ import 'package:foe_archive/presentation/letter_reply/bloc/letter_reply_cubit.da
 import 'package:foe_archive/presentation/letter_reply/bloc/letter_reply_states.dart';
 import 'package:foe_archive/presentation/new_letter/bloc/new_letter_cubit.dart';
 import 'package:foe_archive/presentation/new_letter/bloc/new_letter_states.dart';
+import 'package:foe_archive/presentation/update_letter/bloc/update_letter_cubit.dart';
+import 'package:foe_archive/presentation/update_letter/bloc/update_letter_states.dart';
 import 'package:foe_archive/resources/routes_manager.dart';
 
 import '../../resources/color_manager.dart';
@@ -120,6 +122,45 @@ Widget departmentsWidget(BuildContext context, String fromRoute, dynamic cubit){
               children: [
                 const SizedBox(height: AppSize.s8,),
                 SizedBox(height: AppSize.s40, child: GetSectorsComponent(fromRoute: "Archive Letter", cubit: cubit,)),
+                const SizedBox(height: AppSize.s8,),
+                //cubit.selectedSectorModel != null ? headerItem(context, cubit) : const SizedBox.shrink(),
+                cubit.departmentsList.isNotEmpty ? SizedBox(
+                  height: MediaQuery.sizeOf(context).height /  3,
+                  width: double.infinity,
+                  child: ListView.builder(
+                    controller: cubit.scrollController,
+                    physics: const ClampingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: cubit.departmentsList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return letterItem(context, cubit, index);
+                    },
+                  ),
+                ): const SizedBox.shrink()
+              ],
+            ),
+          );
+        },
+      );
+    case "Update Letter":
+      cubit = cubit as UpdateLetterCubit;
+      return BlocConsumer<UpdateLetterCubit, UpdateLetterStates>(
+        bloc: cubit,
+        listener: (context, state){},
+        builder: (context, state){
+          return Container(
+            width: MediaQuery.sizeOf(context).width * 0.4,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSize.s6),
+              color: Theme.of(context).splashColor,
+            ),
+            padding: const EdgeInsets.all(AppSize.s8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: AppSize.s8,),
+                SizedBox(height: AppSize.s40, child: GetSectorsComponent(fromRoute: "Update Letter", cubit: cubit,)),
                 const SizedBox(height: AppSize.s8,),
                 //cubit.selectedSectorModel != null ? headerItem(context, cubit) : const SizedBox.shrink(),
                 cubit.departmentsList.isNotEmpty ? SizedBox(

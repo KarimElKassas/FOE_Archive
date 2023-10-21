@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:foe_archive/presentation/archived_letter/bloc/archived_letter_cubit.dart';
 import 'package:foe_archive/presentation/archived_letter/bloc/archived_letter_states.dart';
 import 'package:foe_archive/presentation/new_letter/bloc/new_letter_states.dart';
+import 'package:foe_archive/presentation/update_letter/bloc/update_letter_cubit.dart';
+import 'package:foe_archive/presentation/update_letter/bloc/update_letter_states.dart';
 import 'package:foe_archive/resources/extensions.dart';
 import 'dart:ui' as ui;
 import '../../resources/color_manager.dart';
@@ -131,6 +133,62 @@ Widget tagsDialog(BuildContext context, String fromRoute, dynamic cubit) {
           );
         },
       );
+    case "Update Letter":
+      cubit = cubit as UpdateLetterCubit;
+      return BlocConsumer<UpdateLetterCubit, UpdateLetterStates>(
+        bloc: cubit,
+        listener: (context, state){},
+        builder: (context, state){
+          return Directionality(
+            textDirection:
+            AppConstants.isArabic() ? ui.TextDirection.rtl : ui.TextDirection.ltr,
+            child: AlertDialog(
+              // <-- SEE HERE
+                title: Text(
+                  AppStrings.selectTags.tr(),
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColorDark,
+                      fontSize: AppSize.s18,
+                      fontWeight: FontWeightManager.bold,
+                      fontFamily: FontConstants.family),
+                ),
+                backgroundColor: Theme.of(context).splashColor,
+                titlePadding: const EdgeInsets.only(top: AppSize.s12, left: AppSize.s12, right: AppSize.s12),
+                contentPadding: const EdgeInsets.all(AppSize.s12),
+                content: SizedBox(
+                  width: MediaQuery.sizeOf(context).width / 3,
+                  child: SingleChildScrollView(
+                    child: ListBody(
+                      children: <Widget>[
+                        SelectTagsComponent(fromRoute: "Update Letter", cubit: cubit,)
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () async {
+                      if (!isClosing) {
+                        isClosing = true;
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    style: ButtonStyle(overlayColor: MaterialStateColor.resolveWith((states) => ColorManager.goldColor.withOpacity(0.4))),
+                    child: Text(
+                      AppStrings.ok.tr(),
+                      style: TextStyle(
+                          fontSize: AppSize.s14,
+                          fontFamily: FontConstants.family,
+                          fontWeight: FontWeightManager.heavy,
+                          color: Theme.of(context).primaryColorDark),
+                      maxLines: AppSize.s1.toInt(),
+                    ),
+                  ),
+                ],
+                buttonPadding: const EdgeInsets.all(AppSize.s10)),
+          );
+        },
+      );
     case "New Letter":
     default:
       cubit = cubit as NewLetterCubit;
@@ -197,6 +255,8 @@ Widget tagsWidget(BuildContext context,String fromRoute, dynamic cubit){
       cubit = cubit as LetterReplyCubit;
     case "Archive Letter":
       cubit = cubit as ArchivedLettersCubit;
+    case "Update Letter":
+      cubit = cubit as UpdateLetterCubit;
     case "New Letter":
     default:
       cubit = cubit as NewLetterCubit;

@@ -76,8 +76,8 @@ class ArchivedLettersScreen extends StatelessWidget {
   Widget searchAndFilterWidget(BuildContext context, ArchivedLettersCubit cubit){
     return Container(
       decoration: BoxDecoration(
-          color: Colors.black26,
-          border: Border.all(color: Theme.of(context).primaryColorDark, width: 0.1),
+          color: Colors.black12,
+          border: Border.all(color: Colors.transparent,width: 0),
           borderRadius: BorderRadius.circular(AppSize.s16)
       ),
       margin: const EdgeInsets.all(AppSize.s8),
@@ -110,7 +110,7 @@ class ArchivedLettersScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: AppSize.s8, horizontal: AppSize.s8),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(AppSize.s8),
+                      borderRadius: BorderRadius.circular(AppSize.s24),
                       color: Colors.transparent,
                       border: Border.all(
                           color: Theme.of(context).primaryColorDark,
@@ -124,7 +124,7 @@ class ArchivedLettersScreen extends StatelessWidget {
                 ).ripple((){
                   //scaleDialog(context, false, filterDialog(context, cubit));
                 },
-                    borderRadius: BorderRadius.circular(AppSize.s8),
+                    borderRadius: BorderRadius.circular(AppSize.s24),
                     overlayColor: MaterialStateColor.resolveWith((states) => Theme.of(context).primaryColorDark.withOpacity(AppSize.s0_2))),
               ],
             ),

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:foe_archive/domain/usecase/get_incoming_letters_use_case.dart';
+import 'package:foe_archive/domain/usecase/get_incoming_internal_letters_use_case.dart';
 import 'package:foe_archive/presentation/secretary/incoming_internal_letters/bloc/incoming_internal_letters_state.dart';
 
 import '../../../../data/models/letter_model.dart';
@@ -13,7 +13,7 @@ class IncomingInternalLettersCubit extends Cubit<IncomingInternalLettersStates>{
   
   static IncomingInternalLettersCubit get(context)=> BlocProvider.of(context);
 
-  GetIncomingLettersUseCase getIncomingLettersUseCase;
+  GetIncomingInternalLettersUseCase getIncomingLettersUseCase;
 
   String? selectedSortMethod;
   List<String> sortMethods = [AppStrings.letterNumber.tr(),AppStrings.letterDirection.tr(),AppStrings.letterDate.tr()];

@@ -37,7 +37,7 @@ class DioHelper {
   }
 
   static Future<Response> deleteData(
-      {required url, required Map<String, dynamic> query}) async {
-    return await dio.delete(url, queryParameters: query);
+      {required url, Map<String, dynamic>? query, dynamic data, Options? options}) async {
+    return await dio.delete(url, queryParameters: query, data: data, options: options);
   }
 }

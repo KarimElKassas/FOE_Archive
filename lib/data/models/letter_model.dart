@@ -5,11 +5,12 @@ import 'package:foe_archive/resources/constants_manager.dart';
 import '../../resources/strings_manager.dart';
 
 class LetterModel extends Letter{
-  LetterModel(super.letterId, super.letterAbout, super.letterContent, super.letterDate, super.letterNumber, super.previousLetterId,super.confidentialityId,super.necessaryId, super.directionId, super.createdBy, super.hasReply, super.departmentId, super.deletedBy,super.deletedAt,super.updatedBy,super.updatedAt,this.filesList,this.directionName,this.letterReplyId,this.letterTags,this.letterMentions,this.departmentLetters,this.repliesOnLetterCount);
+  LetterModel(super.letterId, super.letterAbout, super.letterContent, super.letterDate, super.letterNumber, super.previousLetterId,super.confidentialityId,super.necessaryId, super.directionId, super.createdBy, super.hasReply, super.departmentId, super.deletedBy,super.deletedAt,super.updatedBy,super.updatedAt,this.filesList,this.directionName,this.letterReplyId,this.letterTags,this.letterMentions,this.departmentLetters,this.repliesOnLetterCount,this.repliesLetters);
   List<FilesList>? filesList;
   List<LetterTags>? letterTags;
   List<LetterMentions>? letterMentions;
   List<DepartmentLetters> departmentLetters;
+  List<LetterModel>? repliesLetters;
   int? letterReplyId;
   String directionName;
   int? repliesOnLetterCount;
@@ -26,7 +27,7 @@ class LetterModel extends Letter{
         int.parse(json['necessaryId'].toString()),
         json['direction'] == null ? 0 : int.parse(json['direction']['directionId'].toString()),
         int.parse(json['createdBy'].toString()),
-        false,
+        json['hasReply'] ?? false,
         int.parse(json['departmentId'].toString()),
         json['deletedBy'] == null ? 0 : int.parse(json['deletedBy'].toString()),
         json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'].toString()),
@@ -46,7 +47,8 @@ class LetterModel extends Letter{
       json['receivedDepartments'] != null
           ? (json['receivedDepartments'] as List<dynamic>).map((e) => DepartmentLetters.fromJson(e as Map<String, dynamic>)).toList()
           : [],
-      json['repliesLetterCounter'] == null ? 0 : int.parse(json['repliesLetterCounter'].toString())
+      json['repliesLetterCounter'] == null ? 0 : int.parse(json['repliesLetterCounter'].toString()),
+      json['repliesLetter'] == null ? null : (json['repliesLetter'] as List<dynamic>).map((e) => LetterModel.fromJson(e as Map<String, dynamic>)).toList()
     );
   }
 

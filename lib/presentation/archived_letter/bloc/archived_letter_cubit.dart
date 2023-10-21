@@ -342,6 +342,7 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
             uploadLetterFiles(r, token);
           }else{
             print("RETURN : $r");
+            clearData();
             emit(ArchivedLettersSuccessCreateLetter());
           }
         });

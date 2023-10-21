@@ -101,5 +101,10 @@ class AppStrings{
   static String archivedLetters = "archivedLetters";
   static String localLetters = "localLetters";
   static String letterReplies = "letterReplies";
+  static String updateLetter = "updateLetter";
+  static String deleteLetter = "deleteLetter";
+  static String letterUpdatedSuccessful = "letterUpdatedSuccessful";
+  static String areYouSureDeleteThisLetter = "areYouSureDeleteThisLetter";
+  static String cannotDeleteLetterHasReply = "cannotDeleteLetterHasReply";
 
 }

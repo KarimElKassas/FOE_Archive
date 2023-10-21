@@ -6,13 +6,13 @@ import '../../../../core/error/failure.dart';
 import '../../../../core/use_case/base_use_case.dart';
 import '../../data/models/user_model.dart';
 
-class GetIncomingLettersUseCase extends BaseUseCase<List<LetterModel>, GetIncomingLettersParameters> {
+class GetIncomingInternalLettersUseCase extends BaseUseCase<List<LetterModel>, GetIncomingLettersParameters> {
   BaseArchiveRepository archiveRepository;
-  GetIncomingLettersUseCase(this.archiveRepository);
+  GetIncomingInternalLettersUseCase(this.archiveRepository);
 
   @override
   Future<Either<Failure, List<LetterModel>>> call(GetIncomingLettersParameters parameters)async {
-    return await archiveRepository.getIncomingLetters(parameters);
+    return await archiveRepository.getIncomingInternalLetters(parameters);
   }
 }
 

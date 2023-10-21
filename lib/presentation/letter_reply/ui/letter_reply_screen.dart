@@ -771,7 +771,7 @@ class LetterReplyScreen extends StatelessWidget {
           content: SizedBox(
               height: AppSize.s75Height,
               width: MediaQuery.sizeOf(context).width * 0.80,
-              child: LetterDetailsScreen(letterId: letterModel.letterId, fromReplyScreen: true,)),
+              child: LetterDetailsScreen(letterModel: letterModel, fromReplyScreen: true,)),
           actions: <Widget>[
             TextButton(
               onPressed: () async {

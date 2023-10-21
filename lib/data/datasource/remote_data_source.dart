@@ -11,14 +11,16 @@ import 'package:foe_archive/domain/usecase/get_archived_letters_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_departments_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_directions_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_for_me_letters_use_case.dart';
-import 'package:foe_archive/domain/usecase/get_incoming_letters_use_case.dart';
+import 'package:foe_archive/domain/usecase/get_incoming_internal_letters_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_letter_by_id_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_letters_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_sectors_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_tags_use_case.dart';
+import 'package:foe_archive/domain/usecase/update_letter_use_case.dart';
 import 'package:foe_archive/domain/usecase/upload_letter_files_use_case.dart';
 
-import '../../domain/usecase/get_outgoing_letters_use_case.dart';
+import '../../domain/usecase/delete_letter_use_case.dart';
+import '../../domain/usecase/get_outgoing_internal_letters_use_case.dart';
 import '../../domain/usecase/get_user_use_case.dart';
 import '../../domain/usecase/login_user_use_case.dart';
 import '../../resources/endpoints.dart';
@@ -29,14 +31,18 @@ abstract class BaseArchiveRemoteDataSource{
   Future<String> loginUser(LoginUserParameters parameters);
   Future<UserModel> getUser(GetUserParameters parameters);
   Future<List<LetterModel>> getLetters(GetLettersParameters parameters);
-  Future<List<LetterModel>> getIncomingLetters(GetIncomingLettersParameters parameters);
-  Future<List<LetterModel>> getOutgoingLetters(GetOutgoingLettersParameters parameters);
+  Future<List<LetterModel>> getIncomingInternalLetters(GetIncomingLettersParameters parameters);
+  Future<List<LetterModel>> getIncomingExternalLetters(GetIncomingLettersParameters parameters);
+  Future<List<LetterModel>> getOutgoingInternalLetters(GetOutgoingLettersParameters parameters);
+  Future<List<LetterModel>> getOutgoingExternalLetters(GetOutgoingLettersParameters parameters);
   Future<List<LetterModel>> getArchivedLetters(GetArchivedLettersParameters parameters);
   Future<List<LetterModel>> getForMeLetters(GetForMeLettersParameters parameters);
   Future<LetterModel?> getLetterById(GetLetterByIdParameters parameters);
   Future<int> createLetter(CreateLetterParameters parameters);
   Future<int> createArchivedLetter(CreateLetterParameters parameters);
   Future<int> createForMeLetter(CreateLetterParameters parameters);
+  Future<String> updateLetter(UpdateLetterParameters parameters);
+  Future<String> deleteLetter(DeleteLetterParameters parameters);
   Future<int> uploadLetterFiles(UploadLetterFilesParameters parameters);
   Future<List<DirectionModel>> getDirections(GetDirectionsParameters parameters);
   Future<List<TagModel>> getTags(GetTagsParameters parameters);
@@ -172,9 +178,9 @@ class ArchiveRemoteDataSource implements BaseArchiveRemoteDataSource{
   }
 
   @override
-  Future<List<LetterModel>> getIncomingLetters(GetIncomingLettersParameters parameters)async {
+  Future<List<LetterModel>> getIncomingInternalLetters(GetIncomingLettersParameters parameters)async {
     final response = await DioHelper.getData(
-        url: EndPoints.getIncomingLetters,
+        url: EndPoints.getIncomingInternalLetters,
         options: Options(headers: {
           'Authorization': 'Bearer ${parameters.data}',
           'Content-Type': 'application/json; charset=utf-8'
@@ -187,9 +193,9 @@ class ArchiveRemoteDataSource implements BaseArchiveRemoteDataSource{
   }
 
   @override
-  Future<List<LetterModel>> getOutgoingLetters(parameters)async {
+  Future<List<LetterModel>> getOutgoingInternalLetters(parameters)async {
     final response = await DioHelper.getData(
-        url: EndPoints.getOutgoingLetters,
+        url: EndPoints.getOutgoingInternalLetters,
         options: Options(headers: {
           'Authorization': 'Bearer ${parameters.data}',
           'Content-Type': 'application/json; charset=utf-8'
@@ -277,6 +283,65 @@ class ArchiveRemoteDataSource implements BaseArchiveRemoteDataSource{
     }else{
       return null;
     }
+
+  }
+
+  @override
+  Future<List<LetterModel>> getOutgoingExternalLetters(GetOutgoingLettersParameters parameters)async {
+    final response = await DioHelper.getData(
+        url: EndPoints.getOutgoingExternalLetters,
+        options: Options(headers: {
+          'Authorization': 'Bearer ${parameters.data}',
+          'Content-Type': 'application/json; charset=utf-8'
+        }));
+    if(response.data['data'] != null){
+      return List<LetterModel>.from((response.data['data'] as List).map((e) => LetterModel.fromJson(e)));
+    }else{
+      return [];
+    }
+  }
+
+  @override
+  Future<List<LetterModel>> getIncomingExternalLetters(GetIncomingLettersParameters parameters)async {
+    final response = await DioHelper.getData(
+        url: EndPoints.getIncomingExternalLetters,
+        options: Options(headers: {
+          'Authorization': 'Bearer ${parameters.data}',
+          'Content-Type': 'application/json; charset=utf-8'
+        }));
+    if(response.data['data'] != null){
+      return List<LetterModel>.from((response.data['data'] as List).map((e) => LetterModel.fromJson(e)));
+    }else{
+      return [];
+    }
+  }
+
+  @override
+  Future<String> updateLetter(UpdateLetterParameters parameters)async {
+    final response = await DioHelper.postData(
+        url: EndPoints.updateLetter,
+        options: Options(headers: {
+          'Authorization': 'Bearer ${parameters.token}',
+          'Content-Type': 'application/json; charset=utf-8'
+        }),
+        data: parameters.data
+    );
+    print(response);
+    return response.data["Message"];
+  }
+
+  @override
+  Future<String> deleteLetter(DeleteLetterParameters parameters)async {
+    final response = await DioHelper.postData(
+        url: EndPoints.deleteLetter,
+        options: Options(headers: {
+          'Authorization': 'Bearer ${parameters.token}',
+          'Content-Type': 'application/json; charset=utf-8'
+        }),
+        query: {'letterId': parameters.letterId},
+    );
+    print(response);
+    return response.data["Message"];
 
   }
 }

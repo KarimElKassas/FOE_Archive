@@ -67,7 +67,7 @@ class LoginCubit extends Cubit<LoginStates>{
 
   void navigate(BuildContext context){
     if(Platform.isWindows){
-      AppConstants.finish(context, isSecretary ? RoutesManager.archiveSecretaryHomeRoute : RoutesManager.archiveHomeRoute);
+      AppConstants.finish(context, isSecretary ? RoutesManager.archiveHomeRoute : RoutesManager.archiveHomeRoute);
     }
   }
 }

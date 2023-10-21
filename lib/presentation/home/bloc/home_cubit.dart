@@ -36,7 +36,7 @@ class HomeCubit extends Cubit<HomeStates> {
   bool isFilterByMonth = false;
   bool isFilterByDay = false;
   bool isFilterByTag = false;
-
+  bool isRefresh = false;
   List<DirectionModel> directionsList = [];
   List<DirectionModel> selectedDirectionsList = [];
 
@@ -114,11 +114,9 @@ class HomeCubit extends Cubit<HomeStates> {
   }
 
   void changeSelectedBox(int boxNumber){
-    if(selectedMenuBox != boxNumber){
       selectedMenuBox = boxNumber;
       elPageController.jumpToPage(boxNumber);
       emit(HomeChangeSelectedBox());
-    }
   }
   Future<void> getAllLetters() async {
     emit(HomeLoadingLetters());

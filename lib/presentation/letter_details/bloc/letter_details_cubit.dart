@@ -1,13 +1,17 @@
 import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:foe_archive/data/models/department_model.dart';
 import 'package:foe_archive/data/models/letter_model.dart';
 import 'package:foe_archive/data/models/user_model.dart';
+import 'package:foe_archive/domain/usecase/delete_letter_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_all_departments_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_letter_by_id_use_case.dart';
 import 'package:foe_archive/presentation/letter_details/bloc/letter_details_states.dart';
+import 'package:foe_archive/resources/color_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../data/models/sector_model.dart';
@@ -18,18 +22,20 @@ import '../../../resources/strings_manager.dart';
 import '../../../utils/prefs_helper.dart';
 
 class LetterDetailsCubit extends Cubit<LetterDetailsStates>{
-  LetterDetailsCubit(this.getSectorsUseCase,this.getAllDepartmentsUseCase,this.getLetterByIdUseCase) : super(LetterDetailsInitial());
+  LetterDetailsCubit(this.getSectorsUseCase,this.getAllDepartmentsUseCase,this.getLetterByIdUseCase,this.deleteLetterUseCase) : super(LetterDetailsInitial());
 
   static LetterDetailsCubit get(context) => BlocProvider.of(context);
   GetSectorsUseCase getSectorsUseCase;
   GetLetterByIdUseCase getLetterByIdUseCase;
   GetAllDepartmentsUseCase getAllDepartmentsUseCase;
+  DeleteLetterUseCase deleteLetterUseCase;
 
   List<SelectedDepartmentModel?> selectedActionDepartmentsList = [];
   List<SelectedDepartmentModel?> selectedKnowDepartmentsList = [];
   List<SectorModel> sectorsList = [];
   List<DepartmentModel> departmentsList = [];
   LetterModel? letterModel;
+  Color letterNumberColor = ColorManager.goldColor;
 
   String formatDate(DateTime date) {
     var format2 = DateFormat("EEE , d MMM , yyyy" ,"ar");
@@ -73,6 +79,9 @@ class LetterDetailsCubit extends Cubit<LetterDetailsStates>{
       }
     }
   }
+  void updateLetterModel (LetterModel newModel){
+
+  }
   Future<void> getSectors() async {
     emit(LetterDetailsLoadingSectors());
     final sessionToken = Preference.prefs.getString("sessionToken")!;
@@ -97,7 +106,15 @@ class LetterDetailsCubit extends Cubit<LetterDetailsStates>{
           emit(LetterDetailsSuccessfulGetLetter());
         });
   }
-
+  bool isLetterMine(LetterModel letterModel){
+    var userMap = jsonDecode(Preference.getString("User").toString());
+    if(userMap != null){
+      UserModel myUserModel = UserModel.fromJson(userMap);
+      return myUserModel.departmentId == letterModel.departmentId;
+    }else{
+      return false;
+    }
+  }
   Future<void> getAllDepartments() async {
     emit(LetterDetailsLoadingDepartments());
     final sessionToken = Preference.prefs.getString("sessionToken")!;
@@ -110,14 +127,37 @@ class LetterDetailsCubit extends Cubit<LetterDetailsStates>{
           emit(LetterDetailsSuccessfulGetDepartments());
         });
   }
+  Future<void> deleteLetter(LetterModel letterModel) async {
+    if(letterModel.hasReply){
+      emit(LetterDetailsErrorDeleteLetter(AppStrings.cannotDeleteLetterHasReply.tr()));
+      return;
+    }
+    emit(LetterDetailsLoadingDeleteLetter());
+   /* final sessionToken = Preference.prefs.getString("sessionToken")!;
+    final result = await deleteLetterUseCase(DeleteLetterParameters(letterModel.letterId,sessionToken));
+    result.fold(
+            (l) => emit(LetterDetailsErrorDeleteLetter(l.errMessage)),
+            (r) {
+          emit(LetterDetailsSuccessfulDeleteLetter());
+        });*/
+  }
+
   void getData(int letterId)async{
     await getLetter(letterId);
     await getSectors();
     await getAllDepartments();
     print("IS NULL : ${letterModel?.departmentLetters}");
     prepareDepartmentsList(letterModel);
+    preparePickedFiles();
   }
-  
+  List<PlatformFile> pickedFiles = [];
+  void preparePickedFiles(){
+    if(letterModel != null && letterModel!.filesList!.isNotEmpty){
+      for (var element in letterModel!.filesList!) {
+        pickedFiles.add(PlatformFile(name: element.fileName, size: 0,path: element.filePath));
+      }
+    }
+  }
   bool canReply(LetterModel model){
     var userMap = jsonDecode(Preference.getString("User").toString());
     UserModel myUserModel = UserModel.fromJson(userMap);
@@ -130,6 +170,12 @@ class LetterDetailsCubit extends Cubit<LetterDetailsStates>{
       }
     }else{
       return false;
+    }
+  }
+  void changeLetterNumberColor(Color newColor){
+    if(letterNumberColor != newColor){
+      letterNumberColor = newColor;
+      emit(LetterDetailsChangeColor());
     }
   }
 }

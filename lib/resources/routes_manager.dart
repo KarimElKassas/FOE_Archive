@@ -6,6 +6,7 @@ import 'package:foe_archive/presentation/letter_details/helper/letter_details_ar
 import 'package:foe_archive/presentation/letter_details/ui/letter_details_screen.dart';
 import 'package:foe_archive/presentation/letter_reply/ui/letter_reply_screen.dart';
 import 'package:foe_archive/presentation/login/ui/login_screen.dart';
+import 'package:foe_archive/presentation/update_letter/ui/update_letter_screen.dart';
 import '../presentation/secretary/home/ui/secretary_home_screen.dart';
 import '../presentation/splash/ui/splash_screen.dart';
 import 'strings_manager.dart';
@@ -17,6 +18,7 @@ class RoutesManager{
   static const String archiveSecretaryHomeRoute = "/archiveSecretaryHome";
   static const String letterDetailsRoute = "/letterDetails";
   static const String letterReplyRoute = "/letterReply";
+  static const String updateLetterRoute = "/updateLetter";
 
 }
 class RouteGenerator{
@@ -33,9 +35,12 @@ class RouteGenerator{
         return MaterialPageRoute(builder: (_) => const SecretaryHomeScreen());
       case RoutesManager.letterDetailsRoute :
         LetterDetailsArgs arguments = args! as LetterDetailsArgs;
-        return MaterialPageRoute(builder: (_) => LetterDetailsScreen(letterId: arguments.letterModel.letterId, fromReplyScreen: arguments.openedFromReply,));
+        return MaterialPageRoute(builder: (_) => LetterDetailsScreen(letterModel: arguments.letterModel, fromReplyScreen: arguments.openedFromReply,));
       case RoutesManager.letterReplyRoute :
         return MaterialPageRoute(builder: (_) => LetterReplyScreen(letterModel: args as LetterModel,));
+      case RoutesManager.updateLetterRoute :
+        UpdateLetterArgs arguments = args! as UpdateLetterArgs;
+        return MaterialPageRoute(builder: (_) => UpdateLetterScreen(letterModel: arguments.letterModel, letterFiles: arguments.letterFiles,selectedActionList: arguments.selectedActionList,selectedKnowList: arguments.selectedKnowList,));
       default:
         return unDefinedRoute();
     }

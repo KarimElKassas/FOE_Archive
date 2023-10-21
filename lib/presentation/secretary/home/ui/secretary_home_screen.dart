@@ -140,6 +140,16 @@ class SecretaryHomeScreen extends StatelessWidget {
                                     Icons.reply_rounded, () {
                                       cubit.changeSelectedBox(5);
                                     }),
+                                sideMenuItem(context, cubit, 5,
+                                    AppStrings.archivedLetters.tr(),
+                                    Icons.archive_outlined, () {
+                                      cubit.changeSelectedBox(5);
+                                    }),
+                                sideMenuItem(context, cubit, 6,
+                                    AppStrings.localLetters.tr(),
+                                    Icons.local_offer_outlined, () {
+                                      cubit.changeSelectedBox(6);
+                                    })
                               ],
                             ),
                           ),

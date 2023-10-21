@@ -8,6 +8,7 @@ import 'package:foe_archive/presentation/archived_letter/ui/archived_letters_scr
 import 'package:foe_archive/presentation/archived_letter/ui/local_letters_screen.dart';
 import 'package:foe_archive/presentation/letter_details/helper/letter_details_args.dart';
 import 'package:foe_archive/presentation/new_letter/ui/new_letter_screen.dart';
+import 'package:foe_archive/presentation/outgoing_letters/bloc/outgoing_letters_cubit.dart';
 import 'package:foe_archive/presentation/outgoing_letters/ui/outgoing_letters_screen.dart';
 import 'package:foe_archive/resources/extensions.dart';
 import 'package:iconly/iconly.dart';
@@ -119,34 +120,28 @@ class HomeScreen extends StatelessWidget {
                                     Icons.archive_outlined, () {
                                       cubit.changeSelectedBox(1);
                                     }),
+
                                 sideMenuItem(context, cubit, 2,
-                                    AppStrings.allLetters.tr(),
-                                    Icons.all_inclusive_outlined, () {
-                                      cubit.getAllLetters();
+                                    AppStrings.incomeLetters.tr(),
+                                    Icons.call_missed_outgoing_outlined, () {
                                       cubit.changeSelectedBox(2);
                                     }),
 
                                 sideMenuItem(context, cubit, 3,
-                                    AppStrings.incomeLetters.tr(),
-                                    Icons.call_missed_outgoing_outlined, () {
+                                    AppStrings.outgoingLetters.tr(),
+                                    Icons.reply_rounded, () {
                                       cubit.changeSelectedBox(3);
                                     }),
 
                                 sideMenuItem(context, cubit, 4,
-                                    AppStrings.outgoingLetters.tr(),
-                                    Icons.reply_rounded, () {
-                                      cubit.changeSelectedBox(4);
-                                    }),
-
-                                sideMenuItem(context, cubit, 5,
                                     AppStrings.archivedLetters.tr(),
                                     Icons.archive_outlined, () {
-                                      cubit.changeSelectedBox(5);
+                                      cubit.changeSelectedBox(4);
                                     }),
-                                sideMenuItem(context, cubit, 6,
+                                sideMenuItem(context, cubit, 5,
                                     AppStrings.localLetters.tr(),
                                     Icons.local_offer_outlined, () {
-                                      cubit.changeSelectedBox(6);
+                                      cubit.changeSelectedBox(5);
                                     })
                               ],
                             ),
@@ -155,7 +150,7 @@ class HomeScreen extends StatelessWidget {
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: sideMenuItem(
-                              context, cubit, 7, AppStrings.logout.tr(),
+                              context, cubit, 6, AppStrings.logout.tr(),
                               Icons.logout, () {
                             scaleDialog(context, true, alterExitDialog(context, cubit));
                           }),
@@ -169,7 +164,6 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         NewLetterScreen(),
                         NewArchivedLetterScreen(),
-                        allLetters(context, cubit,state),
                         const IncomingLettersScreen(),
                         const OutgoingLettersScreen(),
                         const ArchivedLettersScreen(),
@@ -691,6 +685,7 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ).ripple((){
+
           Navigator.pushNamed(
               context, RoutesManager.letterDetailsRoute,
               arguments: LetterDetailsArgs(cubit.filteredLettersList[index], false));

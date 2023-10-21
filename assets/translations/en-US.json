@@ -80,6 +80,11 @@
   "oldArchivedLetter" : "Old Archive ?",
   "archivedLetters" : "Archived Letters",
   "localLetters" : "Local Letters",
-  "letterReplies" : "Your Replies on this letter"
+  "letterReplies" : "Replies on this letter",
+  "updateLetter" : "Update Letter",
+  "deleteLetter" : "Delete Letter",
+  "letterUpdatedSuccessful" : "Letter Updated Successfully",
+  "areYouSureDeleteThisLetter" : "Are you sure you want to delete this letter ?",
+  "cannotDeleteLetterHasReply" : "Cannot delete letter because there's reply on it"
 
 }

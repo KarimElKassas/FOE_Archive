@@ -8,17 +8,19 @@ import 'package:foe_archive/data/models/sector_model.dart';
 import 'package:foe_archive/data/models/tag_model.dart';
 import 'package:foe_archive/domain/repository/base_archive_repository.dart';
 import 'package:foe_archive/domain/usecase/create_letter_use_case.dart';
+import 'package:foe_archive/domain/usecase/delete_letter_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_all_departments_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_archived_letters_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_departments_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_directions_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_for_me_letters_use_case.dart';
-import 'package:foe_archive/domain/usecase/get_incoming_letters_use_case.dart';
+import 'package:foe_archive/domain/usecase/get_incoming_internal_letters_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_letter_by_id_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_letters_use_case.dart';
-import 'package:foe_archive/domain/usecase/get_outgoing_letters_use_case.dart';
+import 'package:foe_archive/domain/usecase/get_outgoing_internal_letters_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_sectors_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_tags_use_case.dart';
+import 'package:foe_archive/domain/usecase/update_letter_use_case.dart';
 import 'package:foe_archive/domain/usecase/upload_letter_files_use_case.dart';
 
 import '../../core/error/failure.dart';
@@ -173,24 +175,9 @@ class ArchiveRepository extends BaseArchiveRepository{
   }
 
   @override
-  Future<Either<Failure, List<LetterModel>>> getIncomingLetters(GetIncomingLettersParameters parameters)async {
+  Future<Either<Failure, List<LetterModel>>> getIncomingInternalLetters(GetIncomingLettersParameters parameters)async {
     try{
-      final result = await remoteDataSource.getIncomingLetters(parameters);
-      return Right(result);
-    }catch (e){
-      if (e is DioException){
-        return left(ServerFailure.fromDioError(e));
-      }
-      print(e);
-      return left(e as ServerFailure);
-    }
-
-  }
-
-  @override
-  Future<Either<Failure, List<LetterModel>>> getOutgoingLetters(GetOutgoingLettersParameters parameters)async {
-    try{
-      final result = await remoteDataSource.getOutgoingLetters(parameters);
+      final result = await remoteDataSource.getIncomingInternalLetters(parameters);
       return Right(result);
     }catch (e){
       if (e is DioException){
@@ -278,4 +265,79 @@ class ArchiveRepository extends BaseArchiveRepository{
       return left(e as ServerFailure);
     }
   }
+
+  @override
+  Future<Either<Failure, List<LetterModel>>> getOutgoingExternalLetters(GetOutgoingLettersParameters parameters)async {
+    try{
+      final result = await remoteDataSource.getOutgoingExternalLetters(parameters);
+      return Right(result);
+    }catch (e){
+      if (e is DioException){
+        return left(ServerFailure.fromDioError(e));
+      }
+      print(e);
+      return left(e as ServerFailure);
+    }
+
+  }
+
+  @override
+  Future<Either<Failure, List<LetterModel>>> getOutgoingInternalLetters(GetOutgoingLettersParameters parameters)async {
+    try{
+      final result = await remoteDataSource.getOutgoingInternalLetters(parameters);
+      return Right(result);
+    }catch (e){
+      if (e is DioException){
+        return left(ServerFailure.fromDioError(e));
+      }
+      print(e);
+      return left(e as ServerFailure);
+    }
+
+  }
+
+  @override
+  Future<Either<Failure, List<LetterModel>>> getIncomingExternalLetters(GetIncomingLettersParameters parameters)async {
+    try{
+      final result = await remoteDataSource.getIncomingExternalLetters(parameters);
+      return Right(result);
+    }catch (e){
+      if (e is DioException){
+        return left(ServerFailure.fromDioError(e));
+      }
+      print(e);
+      return left(e as ServerFailure);
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> updateLetter(UpdateLetterParameters parameters)async {
+    try{
+      final result = await remoteDataSource.updateLetter(parameters);
+      return Right(result);
+    }catch (e){
+      if (e is DioException){
+        return left(ServerFailure.fromDioError(e));
+      }
+      print(e);
+      return left(e as ServerFailure);
+    }
+
+  }
+
+  @override
+  Future<Either<Failure, String>> deleteLetter(DeleteLetterParameters parameters)async {
+    try{
+      final result = await remoteDataSource.deleteLetter(parameters);
+      return Right(result);
+    }catch (e){
+      if (e is DioException){
+        return left(ServerFailure.fromDioError(e));
+      }
+      print(e);
+      return left(e as ServerFailure);
+    }
+
+  }
+
 }

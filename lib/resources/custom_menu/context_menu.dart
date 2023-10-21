@@ -1,6 +1,9 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:contextmenu/contextmenu.dart';
 import 'package:flutter/material.dart';
+import 'package:foe_archive/resources/color_manager.dart';
+import 'package:foe_archive/resources/values_manager.dart';
+import 'package:win32/win32.dart';
 
 import '../../utils/constant.dart';
 import '../language_manager.dart';
@@ -86,7 +89,7 @@ class _MContextMenuState extends State<MContextMenu> {
       duration: _kShortDuration,
       child: SizedBox.shrink(
         child: Card(
-          color: Colors.grey,
+          color: ColorManager.goldColor.withOpacity(AppSize.s0_5),
           margin: EdgeInsets.zero,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),

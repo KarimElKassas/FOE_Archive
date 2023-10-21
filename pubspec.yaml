@@ -36,6 +36,8 @@ dependencies:
   conditional_builder_null_safety: ^0.0.6
   window_manager: ^0.3.7
   package_info_plus:
+  contained_tab_bar_view: ^0.8.0
+  menu_bar: ^0.5.3
   flutter_fancy_tree_view: ^1.1.1
   syncfusion_flutter_datagrid: ^21.1.39
   file_picker: ^5.3.0

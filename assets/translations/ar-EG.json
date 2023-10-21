@@ -87,5 +87,11 @@
   "normal" : "عام",
   "archivedLetters" : "الخطابات المؤرشفة",
   "localLetters" : "الخطابات الخاصة",
-  "letterReplies" : "الردود الخاصة بكم على هذا الخطاب"
+  "letterReplies" : "الردود على هذا الخطاب",
+  "updateLetter" : "تعديل الخطاب",
+  "deleteLetter" : "حذف الخطاب",
+  "letterUpdatedSuccessful" : "تم تعديل الخطاب بنجاح",
+  "areYouSureDeleteThisLetter" : "هل تريد حذف هذا الخطاب ؟",
+  "cannotDeleteLetterHasReply" : "لا يمكن حذف خطاب تم الرد عليه"
+
 }
