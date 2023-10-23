@@ -6,6 +6,8 @@ import 'package:foe_archive/presentation/archived_letter/bloc/archived_letter_cu
 import 'package:foe_archive/presentation/archived_letter/bloc/archived_letter_states.dart';
 import 'package:foe_archive/presentation/widget/loading_indicator.dart';
 import 'package:foe_archive/resources/extensions.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:iconly/iconly.dart';
 
 import '../../../../core/service/service_locator.dart';
@@ -23,7 +25,7 @@ class ArchivedLettersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<ArchivedLettersCubit>()..getArchivedLetters(),
+      create: (context) => sl<ArchivedLettersCubit>()..getArchivedLetters()..initLettersList(),
       child: BlocConsumer<ArchivedLettersCubit,ArchivedLettersStates>(
         listener: (context, state){},
         builder: (context, state){
@@ -222,7 +224,7 @@ class ArchivedLettersScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  cubit.filteredLettersList[index].letterContent,
+                  cubit.filteredLettersList[index].letterAbout,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -270,7 +272,7 @@ class ArchivedLettersScreen extends StatelessWidget {
         ).ripple((){
           Navigator.pushNamed(
               context, RoutesManager.letterDetailsRoute,
-              arguments: LetterDetailsArgs(cubit.filteredLettersList[index], false));
+              arguments: LetterDetailsArgs(cubit.filteredLettersList[index], 2,false));
         },
             borderRadius: const BorderRadius.all(Radius.circular(AppSize.s10)),
             overlayColor: MaterialStateColor.resolveWith((states) => ColorManager.goldColor.withOpacity(0.15))),

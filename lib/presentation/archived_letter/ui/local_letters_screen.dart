@@ -222,7 +222,7 @@ class LocalLettersScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  cubit.filteredLettersList[index].letterContent,
+                  cubit.filteredLettersList[index].letterAbout,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -270,7 +270,7 @@ class LocalLettersScreen extends StatelessWidget {
         ).ripple((){
           Navigator.pushNamed(
               context, RoutesManager.letterDetailsRoute,
-              arguments: LetterDetailsArgs(cubit.filteredLettersList[index], false));
+              arguments: LetterDetailsArgs(cubit.filteredLettersList[index], 3, false));
         },
             borderRadius: const BorderRadius.all(Radius.circular(AppSize.s10)),
             overlayColor: MaterialStateColor.resolveWith((states) => ColorManager.goldColor.withOpacity(0.15))),

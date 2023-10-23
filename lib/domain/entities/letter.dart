@@ -5,7 +5,7 @@ class Letter extends Equatable{
   int letterId;
   String letterAbout;
   String letterContent;
-  DateTime letterDate;
+  dynamic letterDate;
   String letterNumber;
   int previousLetterId;
   int confidentialityId;
@@ -15,9 +15,9 @@ class Letter extends Equatable{
   bool hasReply;
   int departmentId;
   int? deletedBy;
-  DateTime? deletedAt;
+  dynamic deletedAt;
   int? updatedBy;
-  DateTime? updatedAt;
+  dynamic updatedAt;
 
   Letter(
       this.letterId,

@@ -12,6 +12,7 @@ import 'package:foe_archive/domain/usecase/get_all_departments_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_letter_by_id_use_case.dart';
 import 'package:foe_archive/presentation/letter_details/bloc/letter_details_states.dart';
 import 'package:foe_archive/resources/color_manager.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../data/models/sector_model.dart';
@@ -37,9 +38,9 @@ class LetterDetailsCubit extends Cubit<LetterDetailsStates>{
   LetterModel? letterModel;
   Color letterNumberColor = ColorManager.goldColor;
 
-  String formatDate(DateTime date) {
+  String formatDate(String date) {
     var format2 = DateFormat("EEE , d MMM , yyyy" ,"ar");
-    var dateString = format2.format(date);
+    var dateString = format2.format(DateTime.parse(date));
     return dateString;
   }
 
@@ -127,19 +128,26 @@ class LetterDetailsCubit extends Cubit<LetterDetailsStates>{
           emit(LetterDetailsSuccessfulGetDepartments());
         });
   }
-  Future<void> deleteLetter(LetterModel letterModel) async {
+  Future<void> deleteLetter(LetterModel letterModel, int letterType) async {
     if(letterModel.hasReply){
       emit(LetterDetailsErrorDeleteLetter(AppStrings.cannotDeleteLetterHasReply.tr()));
       return;
     }
     emit(LetterDetailsLoadingDeleteLetter());
-   /* final sessionToken = Preference.prefs.getString("sessionToken")!;
+    final sessionToken = Preference.prefs.getString("sessionToken")!;
     final result = await deleteLetterUseCase(DeleteLetterParameters(letterModel.letterId,sessionToken));
     result.fold(
             (l) => emit(LetterDetailsErrorDeleteLetter(l.errMessage)),
             (r) {
+              //deleteLetterFromCache(letterModel.letterId, letterType);
           emit(LetterDetailsSuccessfulDeleteLetter());
-        });*/
+        });
+  }
+  Future<void> deleteLetterFromCache(int letterId, int letterType)async{
+    var lettersBox = Hive.box(letterType == 1 ? 'OutgoingInternalLetters' : letterType == 2 ? 'ArchivedLetters' : 'ForMeLetters');
+    var list = List<LetterModel>.from((lettersBox.get("lettersList", defaultValue: []) as List<dynamic>).map((e) => LetterModel.fromJson((e as LetterModel).toJson())));
+    list.removeWhere((element) => element.letterId == letterId);
+    lettersBox.put('lettersList', list);
   }
 
   void getData(int letterId)async{

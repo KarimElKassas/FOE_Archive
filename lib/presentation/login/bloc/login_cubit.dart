@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:foe_archive/core/error/failure.dart';
+import 'package:hive/hive.dart';
 import '../../../../../resources/constants_manager.dart';
 import '../../../../../resources/routes_manager.dart';
 import '../../../domain/usecase/get_user_use_case.dart';
@@ -57,14 +57,16 @@ class LoginCubit extends Cubit<LoginStates>{
             });
   }
 
-
   void changePasswordVisibility() {
     isPassword = !isPassword;
     suffix = isPassword ? Icons.visibility_rounded : Icons.visibility_off_rounded;
 
     emit(LoginChangePassVisibility());
   }
-
+  Future<void> cacheUserData(Map<String, dynamic> userData) async {
+    final userBox = Hive.box<Map<String, dynamic>>('Users');
+    await userBox.put(userData['userId'], userData);
+  }
   void navigate(BuildContext context){
     if(Platform.isWindows){
       AppConstants.finish(context, isSecretary ? RoutesManager.archiveHomeRoute : RoutesManager.archiveHomeRoute);

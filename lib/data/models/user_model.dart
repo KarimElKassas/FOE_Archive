@@ -1,7 +1,20 @@
 import 'package:foe_archive/domain/entities/user.dart';
+import 'package:hive/hive.dart';
+part 'user_model.g.dart';
 
+@HiveType(typeId: 1)
 class UserModel extends User{
-  UserModel(super.userId, super.userName, super.userPassword, super.departmentId, super.roleId);
+  UserModel(
+      @HiveField(0)
+      super.userId,
+      @HiveField(1)
+      super.userName,
+      @HiveField(2)
+      super.userPassword,
+      @HiveField(3)
+      super.departmentId,
+      @HiveField(4)
+      super.roleId);
 
   factory UserModel.fromJson(Map<String, dynamic> json){
     return UserModel(

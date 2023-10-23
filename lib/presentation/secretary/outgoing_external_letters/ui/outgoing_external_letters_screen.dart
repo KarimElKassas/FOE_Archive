@@ -1,3 +1,7 @@
+/*
+ * Coded By El Qassas
+ */
+
 import 'package:animate_do/animate_do.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -270,7 +274,7 @@ class OutgoingExternalLettersScreen extends StatelessWidget {
         ).ripple((){
           Navigator.pushNamed(
               context, RoutesManager.letterDetailsRoute,
-              arguments: LetterDetailsArgs(cubit.filteredLettersList[index], false));
+              arguments: LetterDetailsArgs(cubit.filteredLettersList[index], 2, false));
         },
             borderRadius: const BorderRadius.all(Radius.circular(AppSize.s10)),
             overlayColor: MaterialStateColor.resolveWith((states) => ColorManager.goldColor.withOpacity(0.15))),

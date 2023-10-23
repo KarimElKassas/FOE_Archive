@@ -29,7 +29,7 @@ class NewArchivedLetterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) =>
-        sl<ArchivedLettersCubit>()..initController()..getTags()..getSectors(),
+        sl<ArchivedLettersCubit>()..initController()..getTags()..getSectors()..getAllDirections(),
         child: BlocConsumer<ArchivedLettersCubit, ArchivedLettersStates>(
           listener: (context, state) {
             if(state is ArchivedLettersSuccessCreateLetter){
@@ -58,9 +58,8 @@ class NewArchivedLetterScreen extends StatelessWidget {
                         .primaryColorDark),
                     title: Text(
                         AppStrings.archiveLetter.tr(),
-                        style: TextStyle(color: Theme
-                            .of(context)
-                            .primaryColorDark,
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColorDark,
                             fontSize: AppSize.s18,
                             fontFamily: FontConstants.family,
                             fontWeight: FontWeightManager.regular)
@@ -74,9 +73,7 @@ class NewArchivedLetterScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(AppSize.s8),
                         color: Colors.transparent,
                         border: Border.all(
-                            color: Theme
-                                .of(context)
-                                .primaryColorDark,
+                            color: Theme.of(context).primaryColorDark,
                             width: AppSize.s1),
                       ),
                       child: Row(
@@ -102,7 +99,7 @@ class NewArchivedLetterScreen extends StatelessWidget {
                   ).ripple(() {
                     if (formKey.currentState!.validate()) {
                       //cubit.createLetter();
-                      if(cubit.isOldArchivedLetter){
+                      if(cubit.selectedOption != AppStrings.localLetter.tr()){
                         cubit.createArchivedLetter();
                       }else{
                         cubit.createForMeLetter();
@@ -260,24 +257,17 @@ class NewArchivedLetterScreen extends StatelessWidget {
                                         .of(context)
                                         .primaryColorDark
                                         .withOpacity(0.15))),
-                            const Spacer(),
-                            Text(AppStrings.oldArchivedLetter.tr(),
-                              style: TextStyle(color: Theme
-                                  .of(context)
-                                  .primaryColorDark,
-                                  fontSize: AppSize.s16,
-                                  fontFamily: FontConstants.family),),
-                            const SizedBox(width: AppSize.s8,),
-                            Checkbox(
-                              value: cubit.isOldArchivedLetter,
-                              activeColor: Theme
-                                  .of(context)
-                                  .primaryColorDark,
-                              checkColor: ColorManager.goldColor,
-                              onChanged: (bool? value) async {
-                                cubit.changeOldArchived();
-                              },
+                            if(cubit.selectedOption == AppStrings.sendToOutside.tr())
+                            Row(
+                              children: [
+                                const SizedBox(width: AppSize.s8,),
+                                Text(AppStrings.letterDirection.tr(), style: TextStyle(color: Theme.of(context).primaryColorDark,fontSize: AppSize.s16,fontFamily: FontConstants.family),),
+                                const SizedBox(width: AppSize.s8,),
+                                SizedBox(height: AppSize.s35, child: SelectDirectionComponent(fromRoute: "Archive Letter", cubit: cubit)),
+                              ],
                             ),
+                            const Spacer(),
+                            SizedBox(height: AppSize.s35 , child: SelectLetterTypeComponent(cubit: cubit)),
                             const SizedBox(width: AppSize.s8,),
                             Container(
                                 decoration: BoxDecoration(
@@ -290,7 +280,7 @@ class NewArchivedLetterScreen extends StatelessWidget {
                                     horizontal: AppSize.s8,
                                     vertical: AppSize.s8),
                                 child: Text(
-                                  cubit.formatDate(cubit.oldArchiveDate),
+                                  cubit.formatDate(cubit.oldArchiveDate.toString()),
                                   style: TextStyle(color: Theme.of(context).primaryColorDark,
                                       fontSize: AppSize.s16,
                                       fontFamily: FontConstants.family),

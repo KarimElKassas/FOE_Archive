@@ -92,6 +92,9 @@
   "deleteLetter" : "حذف الخطاب",
   "letterUpdatedSuccessful" : "تم تعديل الخطاب بنجاح",
   "areYouSureDeleteThisLetter" : "هل تريد حذف هذا الخطاب ؟",
-  "cannotDeleteLetterHasReply" : "لا يمكن حذف خطاب تم الرد عليه"
+  "cannotDeleteLetterHasReply" : "لا يمكن حذف خطاب تم الرد عليه",
+  "sendToOutside" : "تصدير الى الخارج",
+  "localLetter" : "خطاب خاص",
+  "oldArchive" : "ارشيف سابق"
 
 }

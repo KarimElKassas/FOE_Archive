@@ -14,6 +14,7 @@ import 'package:foe_archive/domain/usecase/upload_letter_files_use_case.dart';
 import 'package:foe_archive/presentation/archived_letter/bloc/archived_letter_states.dart';
 import 'package:foe_archive/resources/color_manager.dart';
 import 'package:foe_archive/resources/font_manager.dart';
+import 'package:hive/hive.dart';
 import 'package:v_chat_mention_controller/v_chat_mention_controller.dart';
 
 import '../../../data/models/department_model.dart';
@@ -24,6 +25,8 @@ import '../../../data/models/tag_model.dart';
 import '../../../data/models/user_model.dart';
 import '../../../domain/usecase/create_letter_use_case.dart';
 import '../../../domain/usecase/get_departments_use_case.dart';
+import '../../../domain/usecase/get_directions_use_case.dart';
+import '../../../domain/usecase/get_letter_by_id_use_case.dart';
 import '../../../domain/usecase/get_sectors_use_case.dart';
 import '../../../domain/usecase/get_tags_use_case.dart';
 import '../../../resources/strings_manager.dart';
@@ -32,11 +35,12 @@ import '../../../utils/prefs_helper.dart';
 class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
   ArchivedLettersCubit(this.getDepartmentsUseCase,this.getSectorsUseCase,this.getTagsUseCase,
       this.createArchivedLetterUseCase,this.createForMeLetterUseCase,
-      this.uploadLetterFilesUseCase,this.getArchivedLettersUseCase,this.getForMeLettersUseCase) : super(ArchivedLettersInitial());
+      this.uploadLetterFilesUseCase,this.getArchivedLettersUseCase,this.getForMeLettersUseCase,this.getLetterByIdUseCase,this.getDirectionsUseCase) : super(ArchivedLettersInitial());
 
   static ArchivedLettersCubit get(context) => BlocProvider.of(context);
 
   GetDepartmentsUseCase getDepartmentsUseCase;
+  GetDirectionsUseCase getDirectionsUseCase;
   GetSectorsUseCase getSectorsUseCase;
   GetTagsUseCase getTagsUseCase;
   GetArchivedLettersUseCase getArchivedLettersUseCase;
@@ -44,6 +48,7 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
   CreateArchivedLetterUseCase createArchivedLetterUseCase;
   CreateForMeLetterUseCase createForMeLetterUseCase;
   UploadLetterFilesUseCase uploadLetterFilesUseCase;
+  GetLetterByIdUseCase getLetterByIdUseCase;
 
   TextEditingController letterAboutController = TextEditingController();
   TextEditingController letterNumberController = TextEditingController();
@@ -75,7 +80,8 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
   List<Map<String,dynamic>> uploadDepartmentsList = [];
   List<Map<String,dynamic>> uploadMentionsList = [];
   List<int> uploadTagsList = [];
-
+  List<String> letterOption = [AppStrings.localLetter.tr(),AppStrings.oldArchive.tr(),AppStrings.sendToOutside.tr()];
+  String selectedOption = AppStrings.localLetter.tr();
   List<String> suggestions = ['John', 'Jane', 'Smith'];
   List<String> filteredSuggestions = [];
   List<TagModel> filteredTags = [];
@@ -99,6 +105,15 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
   final logs = <String>[];
   final mentions = <String>[];
   bool isSearchCanView = false;
+  void changeLetterOption(String newValue){
+    selectedOption = newValue;
+    if(selectedOption == AppStrings.oldArchive.tr()){
+      isOldArchivedLetter = true;
+    }else{
+      isOldArchivedLetter = false;
+    }
+    emit(ArchivedLettersChangeLetterType());
+  }
 
   void initController(){
     controller.onSearch = (str) async {
@@ -123,6 +138,18 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
     };
     controller.buildTextSpan();
   }
+  Future<void> getAllDirections() async {
+    emit(ArchiveLettersLoadingDirections());
+    final sessionToken = Preference.prefs.getString("sessionToken")!;
+    final result = await getDirectionsUseCase(GetDirectionsParameters(sessionToken));
+    result.fold(
+            (l) => emit(ArchivedLettersErrorGetDirections(l.errMessage)),
+            (r) {
+          directionsList = [];
+          directionsList = r;
+          emit(ArchivedLettersSuccessfulGetDirections());
+        });
+  }
 
   void changeShowSuggestions(bool newValue){
     if(showSuggestions != newValue){
@@ -145,9 +172,9 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
     oldArchiveDate = newDate;
     emit(ArchivedLettersChangeDate());
   }
-  String formatDate(DateTime date) {
+  String formatDate(String date) {
     var format2 = DateFormat("EEE , d MMM , yyyy" ,"ar");
-    var dateString = format2.format(date);
+    var dateString = format2.format(DateTime.parse(date));
     return dateString;
   }
   void changeSecurityLevel(int newLevel){
@@ -247,6 +274,10 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
     pickedFiles.retainWhere((element) => element != file);
     emit(ArchivedLettersRemoveFile());
   }
+  void initLettersList(){
+    var lettersBox = Hive.box("ArchivedLetters");
+    filteredLettersList = List<LetterModel>.from((lettersBox.get("lettersList", defaultValue: []) as List<dynamic>).map((e) => LetterModel.fromJson((e as LetterModel).toJson())));
+  }
 
   Future<void> getDepartments(int sectorId) async {
     emit(ArchivedLettersLoadingDepartments());
@@ -322,7 +353,7 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
     departmentLetterList();
     selectedTags();
     prepareMentions();
-
+    print("SEEL : ${selectedDirection}");
     Map <String, dynamic> letterData = {
       'receivedDepartments': uploadDepartmentsList,
       'confidentialityId' : securityLevel,
@@ -332,6 +363,7 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
       'LetterContent' : controller.text.toString(),
       'LetterDate' : oldArchiveDate.toString(),
       'tagsId' : uploadTagsList,
+      'directionId' : selectedDirection?.directionId,
       'letterMentions' : uploadMentionsList
     };
     final result = await createArchivedLetterUseCase(CreateLetterParameters(letterData,token));
@@ -345,6 +377,7 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
             clearData();
             emit(ArchivedLettersSuccessCreateLetter());
           }
+          getLetterById(r);
         });
   }
   Future<void> createForMeLetter()async {
@@ -376,7 +409,8 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
             clearData();
             emit(ArchivedLettersSuccessCreateLetter());
           }
-        });
+          getLetterById(r);
+            });
   }
   Future<void> uploadLetterFiles(int letterId, String token)async {
     await preparedFiles();
@@ -463,5 +497,21 @@ class ArchivedLettersCubit extends Cubit<ArchivedLettersStates>{
     filteredLettersList = lettersList.where((element) => element.letterNumber.contains(value) || element.letterAbout.contains(value) || element.letterContent.contains(value)).toList();
     emit(ArchivedLettersSearchLetters());
   }
-
+  Future<void> addLetterToCache(LetterModel letter)async{
+    var lettersBox = Hive.box(isOldArchivedLetter ? 'ArchivedLetters' : 'ForMeLetters');
+    var list = List<LetterModel>.from((lettersBox.get("lettersList", defaultValue: []) as List<dynamic>).map((e) => LetterModel.fromJson((e as LetterModel).toJson())));
+    list.add(letter);
+    lettersBox.put('lettersList', list);
+  }
+  Future<void> getLetterById(int letterId) async {
+    emit(ArchivedLettersLoadingGetLetter());
+    final sessionToken = Preference.prefs.getString("sessionToken")!;
+    final result = await getLetterByIdUseCase(GetLetterByIdParameters(letterId ,sessionToken));
+    result.fold(
+            (l) => emit(ArchivedLettersErrorGetLetter(l.errMessage)),
+            (r) {
+          addLetterToCache(r!);
+          emit(ArchivedLettersSuccessfulGetLetter());
+        });
+  }
 }

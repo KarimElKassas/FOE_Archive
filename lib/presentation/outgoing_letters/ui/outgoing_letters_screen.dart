@@ -332,7 +332,7 @@ class OutgoingLettersScreen extends StatelessWidget {
         ).ripple((){
           Navigator.pushNamed(
               context, RoutesManager.letterDetailsRoute,
-              arguments: LetterDetailsArgs(letterList[index], false));
+              arguments: LetterDetailsArgs(letterList[index], 1,false));
         },
             borderRadius: const BorderRadius.all(Radius.circular(AppSize.s10)),
             overlayColor: MaterialStateColor.resolveWith((states) => ColorManager.goldColor.withOpacity(0.15))),

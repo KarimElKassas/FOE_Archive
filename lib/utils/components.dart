@@ -1733,6 +1733,77 @@ class SelectDirectionComponent extends StatelessWidget {
     }
   }
 }
+class SelectLetterTypeComponent extends StatelessWidget {
+  SelectLetterTypeComponent({Key? key,required this.cubit}) : super(key: key);
+  final ArchivedLettersCubit cubit;
+  final TextEditingController textEditingController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+
+    return BlocConsumer<ArchivedLettersCubit, ArchivedLettersStates>(
+      bloc: cubit,
+      listener: (context, state){},
+      builder: (context, state){
+        var mCubit = cubit;
+        return DropdownButtonHideUnderline(
+          child: DropdownButton2<String>(
+            isExpanded: true,
+            hint: Text(
+              AppStrings.localLetter.tr(),
+              style: TextStyle(
+                fontSize: AppSize.s14,
+                fontFamily: FontConstants.family,
+                color: Theme.of(context).hintColor,
+              ),
+            ),
+            items: mCubit.letterOption.map((item) => DropdownMenuItem(
+              value: item,
+              child: Text(
+                item,
+                style: const TextStyle(
+                    fontSize: AppSize.s14,
+                    fontFamily: FontConstants.family
+                ),
+              ),
+            ))
+                .toList(),
+            value: mCubit.selectedOption,
+            onChanged: (value) {
+              mCubit.changeLetterOption(value!);
+            },
+            buttonStyleData: ButtonStyleData(
+                height: 40,
+                width: 220,
+                padding: const EdgeInsets.symmetric(horizontal: AppSize.s6, vertical: AppSize.s2),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColorDark,
+                  border: Border.all(color: Theme.of(context).primaryColorDark, width: AppSize.s1),
+                  borderRadius: const BorderRadius.all(Radius.circular(AppSize.s6)),
+                )
+            ),
+            dropdownStyleData: DropdownStyleData(
+                maxHeight: 200,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColorDark,
+                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(AppSize.s6), bottomRight: Radius.circular(AppSize.s6))
+                )
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+            ),
+            style: TextStyle(color: ColorManager.darkSecondColor),
+            onMenuStateChange: (isOpen) {
+              if (!isOpen) {
+                textEditingController.clear();
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+}
 
 void scaleDialog(BuildContext context, bool dismissible, Widget content) {
   showGeneralDialog(

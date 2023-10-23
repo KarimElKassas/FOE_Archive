@@ -2,6 +2,7 @@ abstract class ArchivedLettersStates{}
 
 class ArchivedLettersInitial extends ArchivedLettersStates{}
 class ArchivedLettersInitController extends ArchivedLettersStates{}
+class ArchivedLettersChangeLetterType extends ArchivedLettersStates{}
 class ArchivedLettersChangeDate extends ArchivedLettersStates{}
 class ArchivedLettersChangeSecurityLevel extends ArchivedLettersStates{}
 class ArchivedLettersChangeNecessaryLevel extends ArchivedLettersStates{}
@@ -19,12 +20,26 @@ class ArchivedLettersAddDepartmentToKnow extends ArchivedLettersStates{}
 class ArchivedLettersAddTags extends ArchivedLettersStates{}
 class ArchivedLettersSearchLetters extends ArchivedLettersStates{}
 class ArchivedLettersChangeSelectedSector extends ArchivedLettersStates{}
+class ArchivedLettersLoadingGetLetter extends ArchivedLettersStates{}
+class ArchiveLettersLoadingDirections extends ArchivedLettersStates{}
 class ArchivedLettersLoadingDepartments extends ArchivedLettersStates{}
+class ArchivedLettersSuccessfulGetDirections extends ArchivedLettersStates{}
+class ArchivedLettersSuccessfulGetLetter extends ArchivedLettersStates{}
 class ArchivedLettersSuccessfulGetDepartments extends ArchivedLettersStates{}
 class ArchivedLettersErrorGetDepartments extends ArchivedLettersStates{
   final String error;
 
   ArchivedLettersErrorGetDepartments(this.error);
+}
+class ArchivedLettersErrorGetDirections extends ArchivedLettersStates{
+  final String error;
+
+  ArchivedLettersErrorGetDirections(this.error);
+}
+class ArchivedLettersErrorGetLetter extends ArchivedLettersStates{
+  final String error;
+
+  ArchivedLettersErrorGetLetter(this.error);
 }
 class ArchivedLettersLoadingTags extends ArchivedLettersStates{}
 class ArchivedLettersSuccessfulGetTags extends ArchivedLettersStates{}

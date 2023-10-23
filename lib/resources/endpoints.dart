@@ -11,10 +11,10 @@ class EndPoints{
   static const String login = '$authEnd/authenticate';
   static const String getUser = '$authEnd/getUser';
   static const String getLetters = '$letterEnd/GetAllLettersByDepartmentId';
-  static const String getIncomingInternalLetters = '$letterEnd/GetAllLettersIncommingFromInside';
-  static const String getIncomingExternalLetters = '$letterEnd/GetAllLettersIncommingFromOutside';
-  static const String getOutgoingInternalLetters = '$letterEnd/GetAllLettersSendedToInside';
-  static const String getOutgoingExternalLetters = '$letterEnd/GetAllLettersSendedToOutside';
+  static const String getIncomingInternalLetters = '$receivedDepartmentsEnd/GetAllIncomingLetters';
+  static const String getIncomingExternalLetters = '$receivedDepartmentsEnd/GetAllIncomingLettersWithDiraction';
+  static const String getOutgoingInternalLetters = '$letterEnd/GetAllOutgoingLetters';
+  static const String getOutgoingExternalLetters = '$letterEnd/GetAllOutgoingLettersFromOutside';
   static const String getArchivedLetters = '$letterEnd/GetAllArchiveLetters';
   static const String getForMeLetters = '$letterEnd/GetAllForMeLetters';
   static const String getLetterById = '$letterEnd/GetLetterById';

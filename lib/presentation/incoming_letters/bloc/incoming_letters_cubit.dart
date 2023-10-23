@@ -64,9 +64,9 @@ class IncomingLettersCubit extends Cubit<IncomingLettersStates>{
     }
     emit(IncomingLettersSearchLetters());
   }
-  String formatDate(DateTime date) {
+  String formatDate(String date) {
     var format2 = DateFormat("EEE , d MMM , yyyy" ,"ar");
-    var dateString = format2.format(date);
+    var dateString = format2.format(DateTime.parse(date));
     return dateString;
   }
 

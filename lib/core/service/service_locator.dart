@@ -1,4 +1,5 @@
-import 'package:foe_archive/data/datasource/remote_data_source.dart';
+import 'package:foe_archive/data/datasource/local/letter_local_data_source.dart';
+import 'package:foe_archive/data/datasource/remote/remote_data_source.dart';
 import 'package:foe_archive/data/repository/archive_repository.dart';
 import 'package:foe_archive/domain/repository/base_archive_repository.dart';
 import 'package:foe_archive/domain/usecase/create_archived_letter_use_case.dart';
@@ -49,8 +50,8 @@ class ServiceLocator {
     sl.registerFactory(() => SecretaryHomeCubit(sl(),sl()));
     sl.registerFactory(() => LetterDetailsCubit(sl(),sl(),sl(),sl()));
     sl.registerFactory(() => LetterReplyCubit(sl(),sl(),sl(),sl(),sl(),sl()));
-    sl.registerFactory(() => NewLetterCubit(sl(),sl(),sl(),sl(),sl(),sl()));
-    sl.registerFactory(() => ArchivedLettersCubit(sl(),sl(),sl(),sl(),sl(),sl(),sl(),sl()));
+    sl.registerFactory(() => NewLetterCubit(sl(),sl(),sl(),sl(),sl(),sl(),sl()));
+    sl.registerFactory(() => ArchivedLettersCubit(sl(),sl(),sl(),sl(),sl(),sl(),sl(),sl(),sl(),sl()));
     sl.registerFactory(() => IncomingLettersCubit(sl(),sl()));
     sl.registerFactory(() => OutgoingLettersCubit(sl(),sl()));
     sl.registerFactory(() => IncomingInternalLettersCubit(sl()));
@@ -62,10 +63,10 @@ class ServiceLocator {
     /// Remote Data Source
     sl.registerLazySingleton<BaseArchiveRemoteDataSource>(() => ArchiveRemoteDataSource());
     /// Local Data Source
-    //sl.registerLazySingleton<BaseConversationLocalDataSource>(() => ConversationLocalDataSource());
+    sl.registerLazySingleton<BaseLetterLocalDataSource>(() => LetterLocalDataSource());
 
     /// Base Archive Repository
-    sl.registerLazySingleton<BaseArchiveRepository>(() => ArchiveRepository(sl()));
+    sl.registerLazySingleton<BaseArchiveRepository>(() => ArchiveRepository(sl(),sl()));
 
     ///Use Cases
     sl.registerLazySingleton<LoginUserUseCase>(() => LoginUserUseCase(sl()));

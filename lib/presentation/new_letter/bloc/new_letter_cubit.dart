@@ -6,24 +6,27 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:foe_archive/data/models/direction_model.dart';
+import 'package:foe_archive/data/models/letter_model.dart';
 import 'package:foe_archive/data/models/user_model.dart';
 import 'package:foe_archive/domain/usecase/create_letter_use_case.dart';
 import 'package:foe_archive/domain/usecase/get_directions_use_case.dart';
 import 'package:foe_archive/domain/usecase/upload_letter_files_use_case.dart';
 import 'package:foe_archive/presentation/new_letter/bloc/new_letter_states.dart';
+import 'package:hive/hive.dart';
 
 import '../../../data/models/department_model.dart';
 import '../../../data/models/sector_model.dart';
 import '../../../data/models/selected_department_model.dart';
 import '../../../data/models/tag_model.dart';
 import '../../../domain/usecase/get_departments_use_case.dart';
+import '../../../domain/usecase/get_letter_by_id_use_case.dart';
 import '../../../domain/usecase/get_sectors_use_case.dart';
 import '../../../domain/usecase/get_tags_use_case.dart';
 import '../../../resources/strings_manager.dart';
 import '../../../utils/prefs_helper.dart';
 
 class NewLetterCubit extends Cubit<NewLetterStates>{
-  NewLetterCubit(this.getSectorsUseCase,this.getDepartmentsUseCase,this.getTagsUseCase,this.getDirectionsUseCase,this.createLetterUseCase,this.uploadLetterFilesUseCase) : super(NewLetterInitial());
+  NewLetterCubit(this.getSectorsUseCase,this.getDepartmentsUseCase,this.getTagsUseCase,this.getDirectionsUseCase,this.createLetterUseCase,this.uploadLetterFilesUseCase,this.getLetterByIdUseCase) : super(NewLetterInitial());
 
   static NewLetterCubit get(context)=> BlocProvider.of(context);
 
@@ -33,6 +36,7 @@ class NewLetterCubit extends Cubit<NewLetterStates>{
   GetDirectionsUseCase getDirectionsUseCase;
   CreateLetterUseCase createLetterUseCase;
   UploadLetterFilesUseCase uploadLetterFilesUseCase;
+  GetLetterByIdUseCase getLetterByIdUseCase;
 
   TextEditingController letterAboutController = TextEditingController();
   TextEditingController letterNumberController = TextEditingController();
@@ -303,6 +307,7 @@ class NewLetterCubit extends Cubit<NewLetterStates>{
             clearData();
             emit(NewLetterSuccessfulCreate());
           }
+          getLetterById(r);
         });
   }
   Future<void> uploadLetterFiles(int letterId, String token)async {
@@ -320,6 +325,7 @@ class NewLetterCubit extends Cubit<NewLetterStates>{
           emit(NewLetterSuccessfulCreate());
         });
   }
+
   Future<void> getAllDirections() async {
     emit(NewLetterLoadingDirections());
     final sessionToken = Preference.prefs.getString("sessionToken")!;
@@ -332,5 +338,21 @@ class NewLetterCubit extends Cubit<NewLetterStates>{
           emit(NewLetterSuccessfulGetDirections());
         });
   }
-
+  Future<void> addLetterToCache(LetterModel letter)async{
+    var lettersBox = Hive.box('OutgoingInternalLetters');
+    var list = List<LetterModel>.from((lettersBox.get("lettersList", defaultValue: []) as List<dynamic>).map((e) => LetterModel.fromJson((e as LetterModel).toJson())));
+    list.add(letter);
+    lettersBox.put('lettersList', list);
+  }
+  Future<void> getLetterById(int letterId) async {
+    emit(NewLetterLoadingGetLetter());
+    final sessionToken = Preference.prefs.getString("sessionToken")!;
+    final result = await getLetterByIdUseCase(GetLetterByIdParameters(letterId ,sessionToken));
+    result.fold(
+            (l) => emit(NewLetterErrorGetLetter(l.errMessage)),
+            (r) {
+              addLetterToCache(r!);
+          emit(NewLetterSuccessfulGetLetter());
+        });
+  }
 }

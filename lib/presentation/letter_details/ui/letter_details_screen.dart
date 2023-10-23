@@ -24,10 +24,10 @@ import '../../../utils/components.dart';
 
 class LetterDetailsScreen extends StatelessWidget {
   LetterDetailsScreen(
-      {Key? key, required this.letterModel, required this.fromReplyScreen}) : super(key: key);
+      {Key? key, required this.letterModel, required this.letterType, required this.fromReplyScreen}) : super(key: key);
   LetterModel letterModel;
+  int letterType;
   bool fromReplyScreen;
-  List<String> items = ['1', '2'];
 
   @override
   Widget build(BuildContext context) {
@@ -416,8 +416,7 @@ class LetterDetailsScreen extends StatelessWidget {
                             ? AppSize.s16
                             : AppSize.s0,
                       ),
-                      cubit.letterModel!.filesList != null &&
-                              cubit.letterModel!.filesList!.isNotEmpty
+                      cubit.letterModel!.filesList != null && cubit.letterModel!.filesList!.isNotEmpty
                           ? SizedBox(
                               width: 350,
                               child: Container(
@@ -527,8 +526,7 @@ class LetterDetailsScreen extends StatelessWidget {
                     ],
                   ),
                   if (cubit.letterModel!.repliesLetters != null) const Spacer(),
-                  cubit.letterModel!.repliesLetters != null &&
-                          cubit.letterModel!.repliesLetters!.isNotEmpty
+                  cubit.letterModel!.repliesLetters != null && cubit.letterModel!.repliesLetters!.isNotEmpty
                       ? Align(
                           alignment: Alignment.bottomRight,
                           child: Container(
@@ -613,6 +611,7 @@ class LetterDetailsScreen extends StatelessWidget {
               width: MediaQuery.sizeOf(context).width * 0.80,
               child: LetterDetailsScreen(
                 letterModel: cubit.letterModel!.repliesLetters![0],
+                letterType: letterType,
                 fromReplyScreen: true,
               )),
           actions: <Widget>[
@@ -661,8 +660,7 @@ class LetterDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget selectedKnowDepartmentsWidget(
-      BuildContext context, LetterDetailsCubit cubit) {
+  Widget selectedKnowDepartmentsWidget(BuildContext context, LetterDetailsCubit cubit) {
     return Container(
       width: 350,
       decoration: BoxDecoration(
@@ -686,29 +684,31 @@ class LetterDetailsScreen extends StatelessWidget {
           const SizedBox(
             height: AppSize.s4,
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) {
-              return Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(AppSize.s6),
-                  color: ColorManager.goldColor.withOpacity(0.2),
-                ),
-                padding: const EdgeInsets.symmetric(
-                    horizontal: AppSize.s8, vertical: AppSize.s8),
-                margin: const EdgeInsets.all(AppSize.s6),
-                child: Text(
-                  '${cubit.selectedKnowDepartmentsList[index]!.sectorName} - ${cubit.selectedKnowDepartmentsList[index]!.departmentName}',
-                  style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                      fontFamily: FontConstants.family,
-                      fontSize: AppSize.s14,
-                      fontWeight: FontWeightManager.bold),
-                ),
-              );
-            },
-            itemCount: cubit.selectedKnowDepartmentsList.length,
+          Flexible(
+            child: ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(AppSize.s6),
+                    color: ColorManager.goldColor.withOpacity(0.2),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSize.s8, vertical: AppSize.s8),
+                  margin: const EdgeInsets.all(AppSize.s6),
+                  child: Text(
+                    '${cubit.selectedKnowDepartmentsList[index]!.sectorName} - ${cubit.selectedKnowDepartmentsList[index]!.departmentName}',
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColorDark,
+                        fontFamily: FontConstants.family,
+                        fontSize: AppSize.s14,
+                        fontWeight: FontWeightManager.bold),
+                  ),
+                );
+              },
+              itemCount: cubit.selectedKnowDepartmentsList.length,
+            ),
           ),
         ],
       ),
@@ -884,7 +884,7 @@ class LetterDetailsScreen extends StatelessWidget {
           actions: <Widget>[
             TextButton(
               onPressed: () async {
-                cubit.deleteLetter(letterModel);
+                cubit.deleteLetter(letterModel,letterType);
               },
               style: ButtonStyle(
                   overlayColor: MaterialStateColor.resolveWith(

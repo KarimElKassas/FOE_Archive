@@ -688,7 +688,7 @@ class HomeScreen extends StatelessWidget {
 
           Navigator.pushNamed(
               context, RoutesManager.letterDetailsRoute,
-              arguments: LetterDetailsArgs(cubit.filteredLettersList[index], false));
+              arguments: LetterDetailsArgs(cubit.filteredLettersList[index], 1, false));
         },
             borderRadius: const BorderRadius.all(Radius.circular(AppSize.s10)),
             overlayColor: MaterialStateColor.resolveWith((states) => ColorManager.goldColor.withOpacity(0.15))),

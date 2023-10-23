@@ -53,3 +53,9 @@ class ServerFailure extends Failure {
     }
   }
 }
+class LocalDatabaseFailure extends Failure {
+  const LocalDatabaseFailure(super.message);
+}
+class EmptyCacheFailure extends Failure {
+  const EmptyCacheFailure(super.message);
+}

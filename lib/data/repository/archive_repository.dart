@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:foe_archive/data/datasource/remote_data_source.dart';
+import 'package:foe_archive/core/use_case/base_use_case.dart';
+import 'package:foe_archive/data/datasource/local/letter_local_data_source.dart';
+import 'package:foe_archive/data/datasource/remote/remote_data_source.dart';
 import 'package:foe_archive/data/models/department_model.dart';
 import 'package:foe_archive/data/models/direction_model.dart';
 import 'package:foe_archive/data/models/letter_model.dart';
@@ -30,7 +32,8 @@ import '../models/user_model.dart';
 
 class ArchiveRepository extends BaseArchiveRepository{
   BaseArchiveRemoteDataSource remoteDataSource;
-  ArchiveRepository(this.remoteDataSource);
+  BaseLetterLocalDataSource localDataSource;
+  ArchiveRepository(this.remoteDataSource,this.localDataSource);
   @override
   Future<Either<Failure, String>> loginUser(LoginUserParameters parameters)async {
     try{
@@ -176,17 +179,33 @@ class ArchiveRepository extends BaseArchiveRepository{
 
   @override
   Future<Either<Failure, List<LetterModel>>> getIncomingInternalLetters(GetIncomingLettersParameters parameters)async {
+    final result = await remoteDataSource.getIncomingInternalLetters(parameters);
     try{
-      final result = await remoteDataSource.getIncomingInternalLetters(parameters);
+      //await localDataSource.addIncomingInternalLettersToCache(result);
       return Right(result);
-    }catch (e){
+    } catch (e){
       if (e is DioException){
         return left(ServerFailure.fromDioError(e));
       }
       print(e);
       return left(e as ServerFailure);
     }
-
+    try{
+      final letters = await localDataSource.getIncomingInternalLetters(const NoParameters());
+      return Right(letters);
+    } on EmptyCacheFailure{
+      final result = await remoteDataSource.getIncomingInternalLetters(parameters);
+      try{
+        await localDataSource.addIncomingInternalLettersToCache(result);
+        return Right(result);
+      } catch (e){
+        if (e is DioException){
+          return left(ServerFailure.fromDioError(e));
+        }
+        print(e);
+        return left(e as ServerFailure);
+      }
+    }
   }
 
   @override
@@ -223,31 +242,64 @@ class ArchiveRepository extends BaseArchiveRepository{
 
   @override
   Future<Either<Failure, List<LetterModel>>> getArchivedLetters(GetArchivedLettersParameters parameters)async {
+    final result = await remoteDataSource.getArchivedLetters(parameters);
     try{
-      final result = await remoteDataSource.getArchivedLetters(parameters);
+     // await localDataSource.addArchivedLettersToCache(result);
       return Right(result);
-    }catch (e){
-      print("ERROR : $e");
+    } catch (e){
       if (e is DioException){
-        print("ERROR DIO : $e");
         return left(ServerFailure.fromDioError(e));
       }
+      print(e);
       return left(e as ServerFailure);
+    }
+    try{
+      final letters = await localDataSource.getArchivedLetters(const NoParameters());
+      print("RETURN Archived List From Cache ## : $letters");
+      return Right(letters);
+    } on EmptyCacheFailure{
+      final result = await remoteDataSource.getArchivedLetters(parameters);
+      try{
+        await localDataSource.addArchivedLettersToCache(result);
+        return Right(result);
+      } catch (e){
+        if (e is DioException){
+          return left(ServerFailure.fromDioError(e));
+        }
+        print(e);
+        return left(e as ServerFailure);
+      }
     }
   }
 
   @override
   Future<Either<Failure, List<LetterModel>>> getForMeLetters(GetForMeLettersParameters parameters)async {
+    final result = await remoteDataSource.getForMeLetters(parameters);
     try{
-      final result = await remoteDataSource.getForMeLetters(parameters);
+      //await localDataSource.addForMeLettersToCache(result);
       return Right(result);
-    }catch (e){
-      print("ERROR : $e");
+    } catch (e){
       if (e is DioException){
-        print("ERROR DIO : $e");
         return left(ServerFailure.fromDioError(e));
       }
+      print(e);
       return left(e as ServerFailure);
+    }
+    try{
+      final letters = await localDataSource.getForMeLetters(const NoParameters());
+      return Right(letters);
+    } on EmptyCacheFailure{
+      final result = await remoteDataSource.getForMeLetters(parameters);
+      try{
+        await localDataSource.addForMeLettersToCache(result);
+        return Right(result);
+      } catch (e){
+        if (e is DioException){
+          return left(ServerFailure.fromDioError(e));
+        }
+        print(e);
+        return left(e as ServerFailure);
+      }
     }
   }
 
@@ -268,45 +320,95 @@ class ArchiveRepository extends BaseArchiveRepository{
 
   @override
   Future<Either<Failure, List<LetterModel>>> getOutgoingExternalLetters(GetOutgoingLettersParameters parameters)async {
+    final result = await remoteDataSource.getOutgoingExternalLetters(parameters);
     try{
-      final result = await remoteDataSource.getOutgoingExternalLetters(parameters);
+      //await localDataSource.addOutgoingExternalLettersToCache(result);
       return Right(result);
-    }catch (e){
+    } catch (e){
       if (e is DioException){
         return left(ServerFailure.fromDioError(e));
       }
       print(e);
       return left(e as ServerFailure);
+    }
+    try{
+      final letters = await localDataSource.getOutgoingExternalLetters(const NoParameters());
+      return Right(letters);
+    } on EmptyCacheFailure{
+      final result = await remoteDataSource.getOutgoingExternalLetters(parameters);
+      try{
+        await localDataSource.addOutgoingExternalLettersToCache(result);
+        return Right(result);
+      } catch (e){
+        if (e is DioException){
+          return left(ServerFailure.fromDioError(e));
+        }
+        print(e);
+        return left(e as ServerFailure);
+      }
     }
 
   }
 
   @override
   Future<Either<Failure, List<LetterModel>>> getOutgoingInternalLetters(GetOutgoingLettersParameters parameters)async {
+    final result = await remoteDataSource.getOutgoingInternalLetters(parameters);
     try{
-      final result = await remoteDataSource.getOutgoingInternalLetters(parameters);
+      //await localDataSource.addOutgoingInternalLettersToCache(result);
       return Right(result);
-    }catch (e){
+    } catch (e){
       if (e is DioException){
         return left(ServerFailure.fromDioError(e));
       }
       print(e);
       return left(e as ServerFailure);
     }
-
+    try{
+      final letters = await localDataSource.getOutgoingInternalLetters(const NoParameters());
+      return Right(letters);
+    } on EmptyCacheFailure{
+      final result = await remoteDataSource.getOutgoingInternalLetters(parameters);
+      try{
+        await localDataSource.addOutgoingInternalLettersToCache(result);
+        return Right(result);
+      } catch (e){
+        if (e is DioException){
+          return left(ServerFailure.fromDioError(e));
+        }
+        print(e);
+        return left(e as ServerFailure);
+      }
+    }
   }
 
   @override
   Future<Either<Failure, List<LetterModel>>> getIncomingExternalLetters(GetIncomingLettersParameters parameters)async {
+    final result = await remoteDataSource.getIncomingExternalLetters(parameters);
     try{
-      final result = await remoteDataSource.getIncomingExternalLetters(parameters);
+      //await localDataSource.addIncomingExternalLettersToCache(result);
       return Right(result);
-    }catch (e){
+    } catch (e){
       if (e is DioException){
         return left(ServerFailure.fromDioError(e));
       }
       print(e);
       return left(e as ServerFailure);
+    }
+    try{
+      final letters = await localDataSource.getIncomingExternalLetters(const NoParameters());
+      return Right(letters);
+    } on EmptyCacheFailure{
+      final result = await remoteDataSource.getIncomingExternalLetters(parameters);
+      try{
+        await localDataSource.addIncomingExternalLettersToCache(result);
+        return Right(result);
+      } catch (e){
+        if (e is DioException){
+          return left(ServerFailure.fromDioError(e));
+        }
+        print(e);
+        return left(e as ServerFailure);
+      }
     }
   }
 
@@ -337,7 +439,5 @@ class ArchiveRepository extends BaseArchiveRepository{
       print(e);
       return left(e as ServerFailure);
     }
-
   }
-
 }

@@ -5,9 +5,10 @@ import '../../../data/models/selected_department_model.dart';
 
 class LetterDetailsArgs{
   final LetterModel letterModel;
+  final int letterType;
   final bool openedFromReply;
 
-  LetterDetailsArgs(this.letterModel, this.openedFromReply);
+  LetterDetailsArgs(this.letterModel,this.letterType, this.openedFromReply);
 }
 class UpdateLetterArgs{
   final LetterModel letterModel;

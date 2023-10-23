@@ -35,7 +35,7 @@ class RouteGenerator{
         return MaterialPageRoute(builder: (_) => const SecretaryHomeScreen());
       case RoutesManager.letterDetailsRoute :
         LetterDetailsArgs arguments = args! as LetterDetailsArgs;
-        return MaterialPageRoute(builder: (_) => LetterDetailsScreen(letterModel: arguments.letterModel, fromReplyScreen: arguments.openedFromReply,));
+        return MaterialPageRoute(builder: (_) => LetterDetailsScreen(letterModel: arguments.letterModel, letterType: arguments.letterType, fromReplyScreen: arguments.openedFromReply,));
       case RoutesManager.letterReplyRoute :
         return MaterialPageRoute(builder: (_) => LetterReplyScreen(letterModel: args as LetterModel,));
       case RoutesManager.updateLetterRoute :

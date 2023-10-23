@@ -85,6 +85,9 @@
   "deleteLetter" : "Delete Letter",
   "letterUpdatedSuccessful" : "Letter Updated Successfully",
   "areYouSureDeleteThisLetter" : "Are you sure you want to delete this letter ?",
-  "cannotDeleteLetterHasReply" : "Cannot delete letter because there's reply on it"
+  "cannotDeleteLetterHasReply" : "Cannot delete letter because there's reply on it",
+  "sendToOutside" : "Send to outside",
+  "localLetter" : "local letter",
+  "oldArchive" : "old letter"
 
 }

@@ -19,13 +19,13 @@ import 'package:foe_archive/domain/usecase/get_tags_use_case.dart';
 import 'package:foe_archive/domain/usecase/update_letter_use_case.dart';
 import 'package:foe_archive/domain/usecase/upload_letter_files_use_case.dart';
 
-import '../../domain/usecase/delete_letter_use_case.dart';
-import '../../domain/usecase/get_outgoing_internal_letters_use_case.dart';
-import '../../domain/usecase/get_user_use_case.dart';
-import '../../domain/usecase/login_user_use_case.dart';
-import '../../resources/endpoints.dart';
-import '../../utils/dio_helper.dart';
-import '../models/user_model.dart';
+import '../../../domain/usecase/delete_letter_use_case.dart';
+import '../../../domain/usecase/get_outgoing_internal_letters_use_case.dart';
+import '../../../domain/usecase/get_user_use_case.dart';
+import '../../../domain/usecase/login_user_use_case.dart';
+import '../../../resources/endpoints.dart';
+import '../../../utils/dio_helper.dart';
+import '../../models/user_model.dart';
 
 abstract class BaseArchiveRemoteDataSource{
   Future<String> loginUser(LoginUserParameters parameters);

@@ -106,5 +106,8 @@ class AppStrings{
   static String letterUpdatedSuccessful = "letterUpdatedSuccessful";
   static String areYouSureDeleteThisLetter = "areYouSureDeleteThisLetter";
   static String cannotDeleteLetterHasReply = "cannotDeleteLetterHasReply";
+  static String sendToOutside = "sendToOutside";
+  static String localLetter = "localLetter";
+  static String oldArchive = "oldArchive";
 
 }

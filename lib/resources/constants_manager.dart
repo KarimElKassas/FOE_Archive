@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:foe_archive/data/models/letter_model.dart';
+import 'package:foe_archive/data/models/user_model.dart';
+import 'package:foe_archive/domain/entities/user.dart';
+import 'package:hive/hive.dart';
 import '../utils/constant.dart';
 import '../utils/prefs_helper.dart';
 import 'language_manager.dart';
@@ -26,6 +30,39 @@ class AppConstants {
   static const double lg = spaceUnit;
   /// xlg spacing value (24pt)
   static const double xlg = 1.5 * spaceUnit;
+
+  static void registerAdapters(){
+    if(!Hive.isAdapterRegistered(1)){
+      Hive.registerAdapter(UserModelAdapter());
+    }
+    if(!Hive.isAdapterRegistered(3)){
+      Hive.registerAdapter(FilesListAdapter());
+    }
+    if(!Hive.isAdapterRegistered(4)){
+      Hive.registerAdapter(DepartmentLettersAdapter());
+    }
+    if(!Hive.isAdapterRegistered(5)){
+      Hive.registerAdapter(LetterTagsAdapter());
+    }
+    if(!Hive.isAdapterRegistered(6)){
+      Hive.registerAdapter(LetterMentionsAdapter());
+    }
+    if(!Hive.isAdapterRegistered(2)){
+      Hive.registerAdapter(LetterModelAdapter());
+    }
+  }
+  static Future<void> initCaching()async {
+    registerAdapters();
+    await Hive.openBox<Map<String, dynamic>>('Users');
+    await Hive.openBox<Map<String, dynamic>>('Settings');
+    await Hive.openBox('IncomingInternalLetters');
+    await Hive.openBox('IncomingExternalLetters');
+    await Hive.openBox('OutgoingInternalLetters');
+    await Hive.openBox('OutgoingExternalLetters');
+    await Hive.openBox('ArchivedLetters');
+    await Hive.openBox('ForMeLetters');
+    //await Hive.box('Conversations').clear();
+  }
 
   static void finish(BuildContext context, route) {
     Navigator.pushReplacementNamed(context, route);

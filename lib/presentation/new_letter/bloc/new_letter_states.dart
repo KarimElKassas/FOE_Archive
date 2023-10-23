@@ -1,11 +1,18 @@
 abstract class NewLetterStates{}
 class NewLetterInitial extends NewLetterStates{}
+class NewLetterLoadingGetLetter extends NewLetterStates{}
 class NewLetterLoadingCreate extends NewLetterStates{}
 class NewLetterSuccessfulCreate extends NewLetterStates{}
+class NewLetterSuccessfulGetLetter extends NewLetterStates{}
 class NewLetterErrorCreate extends NewLetterStates{
   final String error;
 
   NewLetterErrorCreate(this.error);
+}
+class NewLetterErrorGetLetter extends NewLetterStates{
+  final String error;
+
+  NewLetterErrorGetLetter(this.error);
 }
 class NewLetterAddDepartmentToAction extends NewLetterStates{}
 class NewLetterChangeSecurityLevel extends NewLetterStates{}

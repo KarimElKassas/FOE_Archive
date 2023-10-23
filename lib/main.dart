@@ -9,6 +9,8 @@ import 'package:foe_archive/utils/bloc_observer.dart';
 import 'package:foe_archive/utils/constant.dart';
 import 'package:foe_archive/utils/dio_helper.dart';
 import 'package:foe_archive/utils/prefs_helper.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'app/app.dart';
@@ -22,6 +24,10 @@ void main()async {
   DioHelper.init();
   Bloc.observer = MyBlocObserver();
   ServiceLocator().setup();
+
+  await Hive.initFlutter();
+  await AppConstants.initCaching();
+
   Constants.currentLocale = await AppConstants.getAppLanguage();
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
